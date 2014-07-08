@@ -2,20 +2,48 @@
 *.slo
 *.lo
 *.o
-*.obj
 
 # Compiled Dynamic libraries
 *.so
 *.dylib
-*.dll
 
 # Compiled Static libraries
 *.lai
 *.la
 *.a
-*.lib
 
-# Executables
-*.exe
-*.out
-*.app
+*.ipch
+*.sdf
+*.opensdf
+*.suo
+*.user
+
+# Temp Recording Text File
+recordNote.txt
+
+_ReSharper.*/
+*.cd
+*.tlog
+*.log
+*.sass-cache
+
+*.pidb
+*.userprefs
+*.dbmdl
+
+TestResult.xml
+*.VisualState.xml
+Version.cs
+Version.h
+Version.cpp
+
+# generated files
+ipch/
+Debug/
+Release/
+bin/
+obj/
+
+
+*.TMP
+*.bak
