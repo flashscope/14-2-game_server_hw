@@ -67,9 +67,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	{
 		if ( Ret == -1 )
 		{
-			printf( "GetMessage() failed with error %d\n", GetLastError() );
+			printf_s( "GetMessage() failed with error %d\n", GetLastError() );
 			return 0;
 		}
+
 		TranslateMessage( &msg );
 		DispatchMessage( &msg );
 	}
@@ -217,19 +218,20 @@ LRESULT CALLBACK ServerMessageProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
 
 				DWORD RecvBytes;
 				DWORD Flags = 0;
+
 				if ( WSARecv( SocketInfo->Socket, &( SocketInfo->DataBuf ), 1, &RecvBytes,
 					&Flags, NULL, NULL ) == SOCKET_ERROR )
 				{
 					if ( WSAGetLastError() != WSAEWOULDBLOCK )
-					{
-						printf( "WSARecv() failed with error %d\n", WSAGetLastError() );
+					{ 
+						printf_s( "WSARecv() failed with error %d\n", WSAGetLastError() );
 						FreeSocketInformation( wParam );
 						return 0;
 					}
 				}
 				else // No error so update the byte count
 				{
-					//printf( "WSARecv() is OK!\n" );
+					//printf_s( "WSARecv() is OK!\n" );
 					SocketInfo->BytesRECV = RecvBytes;
 
 
@@ -255,14 +257,14 @@ LRESULT CALLBACK ServerMessageProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
 				{
 					if ( WSAGetLastError() != WSAEWOULDBLOCK )
 					{
-						printf( "WSASend() failed with error %d\n", WSAGetLastError() );
+						printf_s( "WSASend() failed with error %d\n", WSAGetLastError() );
 						FreeSocketInformation( wParam );
 						return 0;
 					}
 				}
 				else // No error so update the byte count
 				{
-					//printf( "WSASend() is OK!\n" );
+					//printf_s( "WSASend() is OK!\n" );
 					SocketInfo->BytesSEND += SendBytes;
 				}
 			}
@@ -281,7 +283,7 @@ LRESULT CALLBACK ServerMessageProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
 			
 			break;
 		case FD_CLOSE: // 접속 해제
-			printf( "Closing socket %d\n", wParam );
+			printf_s( "Closing socket %d\n", wParam );
 			FreeSocketInformation( wParam );
 			return 0;
 			
@@ -305,7 +307,7 @@ void CreateSocketInformation( SOCKET s )
 	{
 		printf_s( "GlobalAlloc() for SOCKET_INFORMATION is OK!\n" );
 	}
-		
+
 
 	// Prepare SocketInfo structure for use
 	SI->Socket = s;
@@ -314,6 +316,7 @@ void CreateSocketInformation( SOCKET s )
 	SI->BytesRECV = 0;
 	SI->Next = SocketInfoList;
 	SocketInfoList = SI;
+
 }
 
 LPSOCKET_INFORMATION GetSocketInformation( SOCKET s )
