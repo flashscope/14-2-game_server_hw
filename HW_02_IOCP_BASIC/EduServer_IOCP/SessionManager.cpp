@@ -6,7 +6,6 @@ SessionManager* GSessionManager = nullptr;
 
 SessionManager::SessionManager() : mCurrentConnectionCount(0)
 {
-	InitializeSRWLock(&m_Lock);
 }
 
 
@@ -16,11 +15,10 @@ ClientSession* SessionManager::CreateClientSession(SOCKET sock)
 
 	
 	//TODO: lock으로 보호할 것
-	AcquireSRWLockExclusive(&m_Lock);
+	FastSpinlockGuard EnterLock(m_Lock);
 	{
 		mClientList.insert(ClientList::value_type(sock, client));
 	}
-	ReleaseSRWLockExclusive(&m_Lock);
 
 	return client;
 }
@@ -29,11 +27,10 @@ ClientSession* SessionManager::CreateClientSession(SOCKET sock)
 void SessionManager::DeleteClientSession(ClientSession* client)
 {
 	//TODO: lock으로 보호할 것
-	AcquireSRWLockExclusive(&m_Lock);
+	FastSpinlockGuard EnterLock(m_Lock);
 	{
 		mClientList.erase(client->mSocket);
 	}
 	
 	delete client;
-	ReleaseSRWLockExclusive(&m_Lock);
 }

@@ -9,7 +9,6 @@
 ClientSession::ClientSession(SOCKET sock) : mSocket(sock), mConnected(false)
 {
 	memset(&mClientAddr, 0, sizeof(SOCKADDR_IN));
-	InitializeSRWLock(&m_Lock);
 }
 
 ClientSession::~ClientSession()
@@ -20,7 +19,7 @@ bool ClientSession::OnConnect(SOCKADDR_IN* addr)
 {
 	mTest = 2;
 	//TODO: 이 영역 lock으로 보호 할 것
-	AcquireSRWLockExclusive(&m_Lock);
+	FastSpinlockGuard EnterLock(m_Lock);
 
 	CRASH_ASSERT(LThreadType == THREAD_MAIN_ACCEPT);
 
@@ -56,7 +55,6 @@ bool ClientSession::OnConnect(SOCKADDR_IN* addr)
 	GSessionManager->IncreaseConnectionCount();
 
 
-	ReleaseSRWLockExclusive(&m_Lock);
 
 	return PostRecv() ;
 }
@@ -65,7 +63,7 @@ void ClientSession::Disconnect(DisconnectReason dr)
 {
 	printf_s("Disconnect clientSession :%d \n", this);
 	//TODO: 이 영역 lock으로 보호할 것
-	AcquireSRWLockExclusive(&m_Lock);
+	FastSpinlockGuard EnterLock(m_Lock);
 
 	if (!mConnected)
 	{
@@ -90,7 +88,6 @@ void ClientSession::Disconnect(DisconnectReason dr)
 
 	mConnected = false ;
 
-	ReleaseSRWLockExclusive(&m_Lock);
 }
 
 bool ClientSession::PostRecv() const

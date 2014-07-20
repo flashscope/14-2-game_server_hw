@@ -156,7 +156,7 @@ unsigned int WINAPI IocpManager::IoWorkerThread(LPVOID lpParam)
 		ClientSession* asCompletionKey = nullptr;
 
 		///<여기에는 GetQueuedCompletionStatus(hComletionPort, ..., GQCS_TIMEOUT)를 수행한 결과값을 대입
-		int ret = GetQueuedCompletionStatus(hComletionPort, &dwTransferred, (PULONG_PTR)&asCompletionKey, (LPOVERLAPPED*)&context, INFINITE);
+		int ret = GetQueuedCompletionStatus(hComletionPort, &dwTransferred, (PULONG_PTR)&asCompletionKey, (LPOVERLAPPED*)&context, GQCS_TIMEOUT);
 
 		/// check time out first 
 		if (ret == 0 && GetLastError() == WAIT_TIMEOUT)

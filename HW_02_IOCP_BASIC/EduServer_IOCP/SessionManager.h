@@ -23,7 +23,7 @@ private:
 	ClientList	mClientList;
 
 	//TODO: mLock; ¼±¾ð
-	SRWLOCK			m_Lock;
+	FastSpinlock			m_Lock;
 
 	volatile long mCurrentConnectionCount;
 };

@@ -1,5 +1,5 @@
 #pragma once
-
+#include "FastSpinlock.h"
 #define BUFSIZE	4096
 
 class ClientSession ;
@@ -63,7 +63,7 @@ private:
 	SOCKADDR_IN		mClientAddr ;
 		
 	//TODO: mLock; 선언할 것
-	SRWLOCK 			m_Lock;
+	FastSpinlock			m_Lock;
 
 	friend class SessionManager;
 } ;
