@@ -216,6 +216,7 @@ bool IocpManager::ReceiveCompletion(const ClientSession* client, OverlappedIOCon
 	Log("ReceiveCompletion %s [%d] \n", context->mBuffer, dwTransferred);
 
 	/// echo back ó�� client->PostSend()����.
+	// 오류처리해야함
 	client->PostSend(context->mBuffer, dwTransferred);
 
 
