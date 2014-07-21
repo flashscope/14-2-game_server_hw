@@ -175,6 +175,7 @@ unsigned int WINAPI IocpManager::IoWorkerThread(LPVOID lpParam)
 		// if (nullptr == context) �� ���� ó��
 		if (nullptr == context)
 		{
+			// crash assert
 			asCompletionKey->Disconnect(DR_RECV_ZERO);
 			GSessionManager->DeleteClientSession(asCompletionKey);
 			continue;
