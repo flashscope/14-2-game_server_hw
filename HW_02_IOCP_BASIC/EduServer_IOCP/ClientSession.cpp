@@ -18,7 +18,7 @@ ClientSession::~ClientSession()
 bool ClientSession::OnConnect(SOCKADDR_IN* addr)
 {
 	mTest = 2;
-	//TODO: ÀÌ ¿µ¿ª lockÀ¸·Î º¸È£ ÇÒ °Í
+	//TODO: ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ lockï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È£ ï¿½ï¿½ ï¿½ï¿½
 	FastSpinlockGuard EnterLock(m_Lock);
 
 	CRASH_ASSERT(LThreadType == THREAD_MAIN_ACCEPT);
@@ -37,7 +37,7 @@ bool ClientSession::OnConnect(SOCKADDR_IN* addr)
 		printf_s("[DEBUG] SO_RCVBUF change error: %d\n", GetLastError()) ;
 		return false;
 	}
-	//TODO: ¿©±â¿¡¼­ CreateIoCompletionPort((HANDLE)mSocket, ...);»ç¿ëÇÏ¿© ¿¬°áÇÒ °Í
+	//TODO: ï¿½ï¿½ï¿½â¿¡ï¿½ï¿½ CreateIoCompletionPort((HANDLE)mSocket, ...);ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
 	HANDLE handle = CreateIoCompletionPort((HANDLE)mSocket, GIocpManager->GetComletionPort(), (ULONG_PTR)this, 0);
 	printf_s("SessionNumber :%d \n", (ULONG_PTR)this);
 
@@ -62,7 +62,7 @@ bool ClientSession::OnConnect(SOCKADDR_IN* addr)
 void ClientSession::Disconnect(DisconnectReason dr)
 {
 	printf_s("Disconnect clientSession :%d \n", this);
-	//TODO: ÀÌ ¿µ¿ª lockÀ¸·Î º¸È£ÇÒ °Í
+	//TODO: ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ lockï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È£ï¿½ï¿½ ï¿½ï¿½
 	FastSpinlockGuard EnterLock(m_Lock);
 
 	if (!mConnected)
@@ -101,7 +101,7 @@ bool ClientSession::PostRecv() const
 
 	OverlappedIOContext* recvContext = new OverlappedIOContext(this, IO_RECV);
 
-	//TODO: WSARecv »ç¿ëÇÏ¿© ±¸ÇöÇÒ °Í
+	//TODO: WSARecv ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
 	recvContext->mWsaBuf.len = BUFSIZE;
 	recvContext->mWsaBuf.buf = recvContext->mBuffer;
 
@@ -116,6 +116,7 @@ bool ClientSession::PostRecv() const
 
 		if (errorCode != ERROR_IO_PENDING)
 		{
+			// context  ì‚­ì œ ì•„ëž˜ë„...
 			return false;
 		}
 	}
@@ -139,7 +140,7 @@ bool ClientSession::PostSend(const char* buf, int len) const
 	sendContext->mWsaBuf.buf = sendContext->mBuffer;
 	sendContext->mWsaBuf.len = len;
 
-	//TODO: WSASend »ç¿ëÇÏ¿© ±¸ÇöÇÒ °Í
+	//TODO: WSASend ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
 	DWORD sendbytes;
 
 	int ret = WSASend(mSocket, &(sendContext->mWsaBuf), 1, &sendbytes, 0, &(sendContext->mOverlapped), NULL);
