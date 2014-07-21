@@ -21,7 +21,7 @@ IocpManager::~IocpManager()
 
 bool IocpManager::Initialize()
 {
-	//TODO: mIoThreadCount = ...;GetSystemInfo»ç¿ëÇØ¼­ set num of I/O threads
+	//TODO: mIoThreadCount = ...;GetSystemInfoï¿½ï¿½ï¿½ï¿½ï¿½Ø¼ï¿½ set num of I/O threads
 	SYSTEM_INFO si;
 	GetSystemInfo(&si);
 	mIoThreadCount = si.dwNumberOfProcessors * 2;
@@ -48,9 +48,9 @@ bool IocpManager::Initialize()
 
 	/// create TCP socket
 	//TODO: mListenSocket = ...
-	mListenSocket = socket(AF_INET, SOCK_STREAM, 0);
-	if (mListenSocket == INVALID_SOCKET)
+	if ( INVALID_SOCKET == ( m_ListenSocket = WSASocket( AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED ) ) )
 	{
+		printf_s( "Socket() Failed with Error Code %d \n", WSAGetLastError() );
 		return false;
 	}
 
@@ -118,10 +118,10 @@ bool IocpManager::StartAcceptLoop()
 		int addrlen = sizeof(clientaddr);
 		getpeername(acceptedSock, (SOCKADDR*)&clientaddr, &addrlen);
 
-		/// ¼ÒÄÏ Á¤º¸ ±¸Á¶Ã¼ ÇÒ´ç°ú ÃÊ±âÈ­
+		/// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ã¼ ï¿½Ò´ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­
 		ClientSession* client = GSessionManager->CreateClientSession(acceptedSock);
 
-		/// Å¬¶ó Á¢¼Ó Ã³¸®
+		/// Å¬ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
 		if (false == client->OnConnect(&clientaddr))
 		{
 			client->Disconnect(DR_ONCONNECT_ERROR);
@@ -155,7 +155,7 @@ unsigned int WINAPI IocpManager::IoWorkerThread(LPVOID lpParam)
 		OverlappedIOContext* context = nullptr;
 		ClientSession* asCompletionKey = nullptr;
 
-		///<¿©±â¿¡´Â GetQueuedCompletionStatus(hComletionPort, ..., GQCS_TIMEOUT)¸¦ ¼öÇàÇÑ °á°ú°ªÀ» ´ëÀÔ
+		///<ï¿½ï¿½ï¿½â¿¡ï¿½ï¿½ GetQueuedCompletionStatus(hComletionPort, ..., GQCS_TIMEOUT)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		int ret = GetQueuedCompletionStatus(hComletionPort, &dwTransferred, (PULONG_PTR)&asCompletionKey, (LPOVERLAPPED*)&context, GQCS_TIMEOUT);
 
 		/// check time out first 
@@ -172,7 +172,7 @@ unsigned int WINAPI IocpManager::IoWorkerThread(LPVOID lpParam)
 			continue;
 		}
 		
-		// if (nullptr == context) ÀÎ °æ¿ì Ã³¸®
+		// if (nullptr == context) ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
 		if (nullptr == context)
 		{
 			asCompletionKey->Disconnect(DR_RECV_ZERO);
@@ -214,7 +214,7 @@ bool IocpManager::ReceiveCompletion(const ClientSession* client, OverlappedIOCon
 {
 	Log("ReceiveCompletion %s [%d] \n", context->mBuffer, dwTransferred);
 
-	/// echo back Ã³¸® client->PostSend()»ç¿ë.
+	/// echo back Ã³ï¿½ï¿½ client->PostSend()ï¿½ï¿½ï¿½ï¿½.
 	client->PostSend(context->mBuffer, dwTransferred);
 
 
@@ -224,7 +224,7 @@ bool IocpManager::ReceiveCompletion(const ClientSession* client, OverlappedIOCon
 
 bool IocpManager::SendCompletion(const ClientSession* client, OverlappedIOContext* context, DWORD dwTransferred)
 {
-	/// Àü¼Û ´Ù µÇ¾ú´ÂÁö È®ÀÎÇÏ´Â °Í Ã³¸®..
+	/// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ç¾ï¿½ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ Ã³ï¿½ï¿½..
 	//if (context->mWsaBuf.len != dwTransferred) {...}
 	if (context->mWsaBuf.len != dwTransferred)
 	{
