@@ -93,7 +93,6 @@ bool IocpManager::Initialize()
 
 	//TODO : WSAIoctl을 이용하여 AcceptEx, DisconnectEx 함수 사용가능하도록 하는 작업..
 	GUID GuidAcceptEx = WSAID_ACCEPTEX;
-
 	DWORD dwBytes;
 	int ret = WSAIoctl( mListenSocket, SIO_GET_EXTENSION_FUNCTION_POINTER,
 					&GuidAcceptEx, sizeof( GuidAcceptEx ),
@@ -109,7 +108,7 @@ bool IocpManager::Initialize()
 		return 1;
 	}
 
-	LPFN_DISCONNECTEX lpfnDisconnectEx = (LPFN_DISCONNECTEX)DisconnectEx;
+	
 	GUID GuidDisconnectEx = WSAID_DISCONNECTEX;
 	ret = WSAIoctl( mListenSocket, SIO_GET_EXTENSION_FUNCTION_POINTER,
 					&GuidDisconnectEx, sizeof( GuidDisconnectEx ),
@@ -194,7 +193,7 @@ unsigned int WINAPI IocpManager::IoWorkerThread(LPVOID lpParam)
 		
 		
 		//printf_s( "%u \n", completionKey );
-
+		CRASH_ASSERT( nullptr != context );
 
 		if (ret == 0 || dwTransferred == 0)
 		{
@@ -210,8 +209,7 @@ unsigned int WINAPI IocpManager::IoWorkerThread(LPVOID lpParam)
 				DeleteIoContext( context );
 				continue;
 			}
-
-		
+			
 			if (context->mIoType == IO_RECV || context->mIoType == IO_SEND )
 			{
 				//?
