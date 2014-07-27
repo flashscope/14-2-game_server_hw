@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "FastSpinlock.h"
 #include "EduServer_IOCP.h"
 #include "ClientSession.h"
@@ -52,16 +52,16 @@ bool SessionManager::AcceptSessions()
 	while (mCurrentIssueCount - mCurrentReturnCount < MAX_CONNECTION)
 	{
 
-		//TODO mFreeSessionList¿¡¼­ ClientSession* ²¨³»¼­ PostAccept() ÇØÁÖ±â.. (À§ÀÇ ReturnClientSession¿Í ¹º°¡ ¹Ý´ë·Î ÇÏ¸é µÉ µí?)
+		//TODO mFreeSessionListì—ì„œ ClientSession* êº¼ë‚´ì„œ PostAccept() í•´ì£¼ê¸°.. (ìœ„ì˜ ReturnClientSessionì™€ ë­”ê°€ ë°˜ëŒ€ë¡œ í•˜ë©´ ë  ë“¯?)
 		ClientSession* newClient = mFreeSessionList.back();
 		mFreeSessionList.pop_back();
 
 		++mCurrentIssueCount;
 
-		// AddRef()µµ ´ç¿¬È÷ ÇØÁà¾ß ÇÏ°í...
+		// AddRef()ë„ ë‹¹ì—°ížˆ í•´ì¤˜ì•¼ í•˜ê³ ...
 		newClient->AddRef();
 
-		// ½ÇÆÐ½Ã false
+		// ì‹¤íŒ¨ì‹œ false
 		if ( false == newClient->PostAccept() )
 		{
 			return false;

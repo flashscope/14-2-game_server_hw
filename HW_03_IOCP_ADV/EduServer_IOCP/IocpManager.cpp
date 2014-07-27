@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "Exception.h"
 #include "IocpManager.h"
 #include "EduServer_IOCP.h"
@@ -11,17 +11,16 @@ __declspec(thread) int LIoThreadId = 0;
 IocpManager* GIocpManager = nullptr;
 
 
-//TODO AcceptEx DisconnectEx ÇÔ¼ö »ç¿ëÇÒ ¼ö ÀÖµµ·Ï ±¸Çö.
-
-BOOL DisconnectEx(SOCKET hSocket, LPOVERLAPPED lpOverlapped, DWORD dwFlags, DWORD reserved)
+//TODO AcceptEx DisconnectEx í•¨ìˆ˜ ì‚¬ìš©í•  ìˆ˜ ìžˆë„ë¡ êµ¬í˜„.
+BOOL DisconnectEx( SOCKET hSocket, LPOVERLAPPED lpOverlapped, DWORD dwFlags, DWORD reserved )
 {
 	//return ...
 	printf_s( "asd \n" );
 	return 0;
 }
 
-BOOL AcceptEx(SOCKET sListenSocket, SOCKET sAcceptSocket, PVOID lpOutputBuffer, DWORD dwReceiveDataLength,
-	DWORD dwLocalAddressLength, DWORD dwRemoteAddressLength, LPDWORD lpdwBytesReceived, LPOVERLAPPED lpOverlapped)
+BOOL AcceptEx( SOCKET sListenSocket, SOCKET sAcceptSocket, PVOID lpOutputBuffer, DWORD dwReceiveDataLength,
+			   DWORD dwLocalAddressLength, DWORD dwRemoteAddressLength, LPDWORD lpdwBytesReceived, LPOVERLAPPED lpOverlapped )
 {
 	//return ...
 	printf_s( "asd \n" );
@@ -92,15 +91,14 @@ bool IocpManager::Initialize()
 		return false;
 	}
 
-	//TODO : WSAIoctlÀ» ÀÌ¿ëÇÏ¿© AcceptEx, DisconnectEx ÇÔ¼ö »ç¿ë°¡´ÉÇÏµµ·Ï ÇÏ´Â ÀÛ¾÷..
-	LPFN_ACCEPTEX lpfnAcceptEx = (LPFN_ACCEPTEX)AcceptEx;
-	int ret = 0;
+	//TODO : WSAIoctlì„ ì´ìš©í•˜ì—¬ AcceptEx, DisconnectEx í•¨ìˆ˜ ì‚¬ìš©ê°€ëŠ¥í•˜ë„ë¡ í•˜ëŠ” ìž‘ì—…..
 	GUID GuidAcceptEx = WSAID_ACCEPTEX;
+
 	DWORD dwBytes;
-	ret = WSAIoctl( mListenSocket, SIO_GET_EXTENSION_FUNCTION_POINTER,
-						&GuidAcceptEx, sizeof( GuidAcceptEx ),
-						&lpfnAcceptEx2, sizeof( lpfnAcceptEx2 ),
-						&dwBytes, NULL, NULL );
+	int ret = WSAIoctl( mListenSocket, SIO_GET_EXTENSION_FUNCTION_POINTER,
+					&GuidAcceptEx, sizeof( GuidAcceptEx ),
+					&lpfnAcceptEx2, sizeof( lpfnAcceptEx2 ),
+					&dwBytes, NULL, NULL );
 
 	if ( ret == SOCKET_ERROR )
 	{
@@ -126,8 +124,6 @@ bool IocpManager::Initialize()
 		CRASH_ASSERT( false );
 		return 1;
 	}
-
-
 
 	/// make session pool
 	GSessionManager->PrepareSessions();
@@ -196,20 +192,22 @@ unsigned int WINAPI IocpManager::IoWorkerThread(LPVOID lpParam)
 
 		ClientSession* theClient = context ? context->mSessionObject : nullptr ;
 		
-
-
 		
-		
-		
+		//printf_s( "%u \n", completionKey );
 
 
 		if (ret == 0 || dwTransferred == 0)
 		{
 			int gle = GetLastError();
 
-			//TODO: check time out first ... GQCS Å¸ÀÓ ¾Æ¿ôÀÇ °æ¿ì´Â ¾î¶»°Ô?
-			if ( gle == WAIT_TIMEOUT )
+			//TODO: check time out first ... GQCS íƒ€ìž„ ì•„ì›ƒì˜ ê²½ìš°ëŠ” ì–´ë–»ê²Œ?
+			if ( WAIT_TIMEOUT == gle )
 			{
+				CRASH_ASSERT( nullptr != theClient );
+
+				theClient->DisconnectRequest( DR_COMPLETION_ERROR );
+
+				DeleteIoContext( context );
 				continue;
 			}
 
@@ -265,7 +263,8 @@ unsigned int WINAPI IocpManager::IoWorkerThread(LPVOID lpParam)
 			/// connection closing
 			theClient->DisconnectRequest(DR_IO_REQUEST_ERROR);
 		}
-
+		
+		//printf_s( "delete ready \n" );
 		DeleteIoContext(context);
 	}
 

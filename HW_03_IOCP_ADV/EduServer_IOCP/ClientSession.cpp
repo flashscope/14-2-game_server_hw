@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "Exception.h"
 #include "EduServer_IOCP.h"
 #include "ClientSession.h"
@@ -47,36 +47,30 @@ bool ClientSession::PostAccept()
 {
 	CRASH_ASSERT(LThreadType == THREAD_MAIN);
 
-	OverlappedAcceptContext* acceptContext = new OverlappedAcceptContext(this);
-	
-	//TODO : AccpetEx¸¦ ÀÌ¿ëÇÑ ±¸Çö.
+	OverlappedAcceptContext* acceptContext = new OverlappedAcceptContext( this );
 
-	DWORD dwBytes = 0;
-	acceptContext->mWsaBuf.len = (ULONG)mBuffer.GetFreeSpaceSize();
+	DWORD dwRecvBytes = 0;
 	acceptContext->mWsaBuf.buf = mBuffer.GetBuffer();
+	acceptContext->mWsaBuf.len = mBuffer.GetFreeSpaceSize();
 
-	int ret = GIocpManager->lpfnAcceptEx2( *GIocpManager->GetListenSocket(), mSocket, &acceptContext->mWsaBuf, 0,
-			  sizeof( sockaddr_in ) + 16, sizeof( sockaddr_in ) + 16, &dwBytes, &acceptContext->mOverlapped );
-	/*
-	if ( ret == FALSE )
+	//TODO : AccpetExë¥¼ ì´ìš©í•œ êµ¬í˜„.
+
+	int ret = GIocpManager->lpfnAcceptEx2( *GIocpManager->GetListenSocket(),
+										   acceptContext->mSessionObject->GetSocket(),
+										   acceptContext->mWsaBuf.buf, NULL, sizeof( sockaddr_in ) + 16, sizeof( sockaddr_in ) + 16,
+										   &dwRecvBytes, (OVERLAPPED*)acceptContext );
+
+	if ( ret == true || WSAGetLastError() == ERROR_IO_PENDING )
 	{
-		ret = WSAGetLastError();
-		if ( ret != WSA_IO_PENDING )
-		{
-			wprintf( L"AcceptEx. failed with error: %u\n", ret );
-			delete acceptContext;
-
-			closesocket( mSocket );
-			closesocket( *GIocpManager->GetListenSocket() );
-			WSACleanup();
-			return false;
-		}
-
+		return true;
 	}
-	*/
+	else
+	{
+		printf_s( "[DEBUG] Client PostAccept error : %d \n", WSAGetLastError() );
+		return false;
+	}
 
 
-	return true;
 }
 
 void ClientSession::AcceptCompletion()
@@ -124,7 +118,7 @@ void ClientSession::AcceptCompletion()
 			break;
 		}
 
-		//TODO: CreateIoCompletionPort¸¦ ÀÌ¿ëÇÑ ¼ÒÄÏ ¿¬°á
+		//TODO: CreateIoCompletionPortë¥¼ ì´ìš©í•œ ì†Œì¼“ ì—°ê²°
 		//HANDLE handle = CreateIoCompletionPort(...);
 		HANDLE handle = CreateIoCompletionPort( (HANDLE)mSocket, GIocpManager->GetComletionPort(), ( ULONG_PTR )this, 0 );
 
@@ -134,6 +128,7 @@ void ClientSession::AcceptCompletion()
 			closesocket( mSocket );
 			WSACleanup();
 			resultOk = false;
+			break;
 		}
 
 	} while (false);
@@ -156,17 +151,27 @@ void ClientSession::AcceptCompletion()
 
 void ClientSession::DisconnectRequest(DisconnectReason dr)
 {
-	/// ÀÌ¹Ì ²÷°å°Å³ª ²÷±â´Â ÁßÀÌ°Å³ª
+	/// ì´ë¯¸ ëŠê²¼ê±°ë‚˜ ëŠê¸°ëŠ” ì¤‘ì´ê±°ë‚˜
 	if ( 0 == InterlockedExchange( &mConnected, 0 ) )
 	{
-		return ;
+		return;
 	}
-	
-	OverlappedDisconnectContext* context = new OverlappedDisconnectContext(this, dr);
+		
 
-	//TODO: DisconnectEx¸¦ ÀÌ¿ëÇÑ ¿¬°á ²÷±â ¿äÃ»
-	DWORD dwFlags = 0;
-	int ret = GIocpManager->lpfnDisconnectEx2( mSocket, &context->mOverlapped, dwFlags, 0 );
+	OverlappedDisconnectContext* context = new OverlappedDisconnectContext( this, dr );
+
+	//TODO: DisconnectExë¥¼ ì´ìš©í•œ ì—°ê²° ëŠê¸° ìš”ì²­
+	int ret = GIocpManager->lpfnDisconnectEx2( context->mSessionObject->GetSocket(), &context->mOverlapped, TF_REUSE_SOCKET, 0 );
+
+	if ( ret == true || WSAGetLastError() == ERROR_IO_PENDING )
+	{
+		return;
+	}
+	else
+	{
+		printf_s( "[DEBUG] Client Disconnect error : %d \n", WSAGetLastError() );
+		return;
+	}
 
 
 }
@@ -189,7 +194,7 @@ bool ClientSession::PreRecv()
 
 	OverlappedPreRecvContext* recvContext = new OverlappedPreRecvContext(this);
 
-	//TODO: zero-byte recv ±¸Çö
+	//TODO: zero-byte recv êµ¬í˜„
 
 	DWORD recvbytes = 0;
 	DWORD flags = 0;
@@ -318,9 +323,10 @@ void ClientSession::ReleaseRef()
 	}
 }
 
-
 void DeleteIoContext(OverlappedIOContext* context)
 {
+	
+
 	if ( nullptr == context )
 	{
 		CRASH_ASSERT( false );
@@ -329,7 +335,8 @@ void DeleteIoContext(OverlappedIOContext* context)
 
 	context->mSessionObject->ReleaseRef();
 
-	//delete context;
+	//printf_s( "delete !!! \n" );
+	delete context;
 
 	
 }

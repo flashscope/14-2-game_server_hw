@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 class ClientSession;
 
@@ -25,9 +25,14 @@ public:
 	int	GetIoThreadCount()		{ return mIoThreadCount;  }
 
 	SOCKET* GetListenSocket()  { return &mListenSocket;  }
+	
+	
+	
 	LPFN_ACCEPTEX lpfnAcceptEx2 = NULL;
 	LPFN_DISCONNECTEX lpfnDisconnectEx2 = NULL;
-
+	
+	
+	
 private:
 
 	static unsigned int WINAPI IoWorkerThread(LPVOID lpParam);
@@ -42,6 +47,7 @@ private:
 	int		mIoThreadCount;
 
 	SOCKET	mListenSocket;
+
 };
 
 extern __declspec(thread) int LIoThreadId;
