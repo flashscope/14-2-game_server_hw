@@ -17,7 +17,9 @@ struct MemAllocInfo : SLIST_ENTRY
 inline void* AttachMemAllocInfo(MemAllocInfo* header, int size)
 {
 	//TODO: header에 MemAllocInfo를 펼친 다음에 실제 앱에서 사용할 메모리 주소를 void*로 리턴... 실제 사용되는 예 및 DetachMemAllocInfo 참고.
-	return 0;
+	header->mAllocSize = size;
+	++header;
+	return header;
 }
 
 inline MemAllocInfo* DetachMemAllocInfo(void* ptr)
@@ -75,25 +77,24 @@ struct PooledAllocatable {};
 template <class T, class... Args>
 T* xnew(Args... arg)
 {
-	static_assert(true == std::is_convertible<T, PooledAllocatable>::value, "only allowed when PooledAllocatable");
+	//static_assert(true == std::is_convertible<T, PooledAllocatable>::value, "only allowed when PooledAllocatable");
 
 	//TODO: T* obj = xnew<T>(...); 처럼 사용할 수있도록 메모리풀에서 할당하고 생성자 불러주고 리턴.
 
 	void* alloc = nullptr;
 	
-	//TODO: ... ...
+	alloc = new ( GMemoryPool->Allocate( sizeof( T ) ) ) T( arg... );
+	
 
-
-
-	return reinterpret_cast<T*>(alloc);
+	return reinterpret_cast<T*>( alloc );
 }
 
 template <class T>
 void xdelete(T* object)
 {
-	static_assert(true == std::is_convertible<T, PooledAllocatable>::value, "only allowed when PooledAllocatable");
+	//static_assert(true == std::is_convertible<T, PooledAllocatable>::value, "only allowed when PooledAllocatable");
 
 	//TODO: object의 소멸자 불러주고 메모리풀에 반납.
 	object->~T();
-
+	GMemoryPool->Deallocate( object, NULL );
 }

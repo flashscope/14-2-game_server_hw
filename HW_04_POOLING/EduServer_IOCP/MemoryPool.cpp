@@ -14,6 +14,7 @@ SmallSizeMemoryPool::SmallSizeMemoryPool(DWORD allocSize) : mAllocSize(allocSize
 MemAllocInfo* SmallSizeMemoryPool::Pop()
 {
 	MemAllocInfo* mem = 0;//TODO: InterlockedPopEntrySList를 이용하여 mFreeList에서 pop으로 메모리를 가져올 수 있는지 확인. 
+	mem = reinterpret_cast<MemAllocInfo*>(InterlockedPopEntrySList( &mFreeList ));
 
 	if (NULL == mem)
 	{
@@ -32,7 +33,8 @@ MemAllocInfo* SmallSizeMemoryPool::Pop()
 void SmallSizeMemoryPool::Push(MemAllocInfo* ptr)
 {
 	//TODO: InterlockedPushEntrySList를 이용하여 메모리풀에 (재사용을 위해) 반납.
-
+	InterlockedPushEntrySList( &mFreeList, ptr );
+	
 	InterlockedDecrement(&mAllocCount);
 }
 
@@ -65,10 +67,19 @@ MemoryPool::MemoryPool()
 	}
 
 	//TODO: [2048, 4096] 범위 내에서 256바이트 단위로 SmallSizeMemoryPool을 할당하고 
-	//TODO: mSmallSizeMemoryPoolTable에 O(1) access가 가능하도록 SmallSizeMemoryPool의 주소 기록
-
 	
+	for ( int i = 2048; i < 4096; i += 256 )
+	{
+		SmallSizeMemoryPool* pool = new SmallSizeMemoryPool( i );
+		for ( int j = recent + 1; j <= i; ++j )
+		{
+			mSmallSizeMemoryPoolTable[j] = pool;
+		}
+		recent = i;
+	}
 
+	//TODO: mSmallSizeMemoryPoolTable에 O(1) access가 가능하도록 SmallSizeMemoryPool의 주소 기록
+	mSmallSizeMemoryPoolTable[0] = new SmallSizeMemoryPool( 32 );
 }
 
 void* MemoryPool::Allocate(int size)
@@ -83,7 +94,7 @@ void* MemoryPool::Allocate(int size)
 	else
 	{
 		//TODO: SmallSizeMemoryPool에서 할당
-		//header = ...; 
+		header = mSmallSizeMemoryPoolTable[realAllocSize]->Pop();
 	}
 
 	return AttachMemAllocInfo(header, realAllocSize);
@@ -105,6 +116,6 @@ void MemoryPool::Deallocate(void* ptr, long extraInfo)
 	else
 	{
 		//TODO: SmallSizeMemoryPool에 (재사용을 위해) push..
-		
+		mSmallSizeMemoryPoolTable[realAllocSize]->Push( header );
 	}
 }
