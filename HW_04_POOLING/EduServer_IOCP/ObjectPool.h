@@ -13,6 +13,8 @@ public:
 	static void* operator new(size_t objSize)
 	{
 		//TODO: TOBJECT 타입 단위로 lock 잠금
+		//ClassTypeLock < TOBJECT >;
+		FastSpinlockGuard guard( mLock );
 
 		if (!mFreeList)
 		{
@@ -29,6 +31,8 @@ public:
 				ppCurr = reinterpret_cast<uint8_t**>(pNext);
 			}
 
+			*ppCurr = NULL;
+
 			mTotalAllocCount += ALLOC_COUNT;
 		}
 
@@ -42,9 +46,11 @@ public:
 	static void	operator delete(void* obj)
 	{
 		//TODO: TOBJECT 타입 단위로 lock 잠금
+		//ClassTypeLock < TOBJECT >;
+		FastSpinlockGuard guard( mLock );
 
 		CRASH_ASSERT(mCurrentUseCount > 0);
-
+		
 		--mCurrentUseCount;
 
 		*reinterpret_cast<uint8_t**>(obj) = mFreeList;
@@ -57,6 +63,9 @@ private:
 	static int		mTotalAllocCount; ///< for tracing
 	static int		mCurrentUseCount; ///< for tracing
 
+	//static int		mTotalAllocCount; ///< for tracing
+	//static int		mCurrentUseCount; ///< for tracing
+	static FastSpinlock mLock;
 };
 
 
@@ -70,3 +79,5 @@ template <class TOBJECT, int ALLOC_COUNT>
 int ObjectPool<TOBJECT, ALLOC_COUNT>::mCurrentUseCount = 0;
 
 
+template <class TOBJECT, int ALLOC_COUNT>
+FastSpinlock ObjectPool<TOBJECT, ALLOC_COUNT>::mLock;

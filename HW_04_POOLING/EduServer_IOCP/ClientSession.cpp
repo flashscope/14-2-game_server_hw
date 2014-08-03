@@ -53,7 +53,7 @@ bool ClientSession::PostAccept()
 	acceptContext->mWsaBuf.len = 0;
 	acceptContext->mWsaBuf.buf = nullptr;
 
-	if (FALSE == AcceptEx2(*GIocpManager->GetListenSocket(), mSocket, GIocpManager->mAcceptBuf, 0,
+	if (FALSE == AcceptEx(*GIocpManager->GetListenSocket(), mSocket, GIocpManager->mAcceptBuf, 0,
 		sizeof(SOCKADDR_IN)+16, sizeof(SOCKADDR_IN)+16, &bytes, (LPOVERLAPPED)acceptContext))
 	{
 		if (WSAGetLastError() != WSA_IO_PENDING)
@@ -147,7 +147,7 @@ void ClientSession::DisconnectRequest(DisconnectReason dr)
 	
 	OverlappedDisconnectContext* context = new OverlappedDisconnectContext(this, dr);
 
-	if (FALSE == DisconnectEx2(mSocket, (LPWSAOVERLAPPED)context, TF_REUSE_SOCKET, 0))
+	if (FALSE == DisconnectEx(mSocket, (LPWSAOVERLAPPED)context, TF_REUSE_SOCKET, 0))
 	{
 		if (WSAGetLastError() != WSA_IO_PENDING)
 		{
