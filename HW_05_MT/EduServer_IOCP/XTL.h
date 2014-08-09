@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "MemoryPool.h"
 #include <list>
 #include <vector>

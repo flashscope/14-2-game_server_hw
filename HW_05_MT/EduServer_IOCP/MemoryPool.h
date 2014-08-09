@@ -1,18 +1,18 @@
-#pragma once
+ï»¿#pragma once
 
 
 
-/// Ä¿½ºÅÒÇÏ°Ô Èü¿¡¼­ ÇÒ´ç ¹Þ´Â ¾ÖµéÀº ÀüºÎ ¸Þ¸ð¸® Á¤º¸ ºÙ¿©ÁÖ±â
+/// ì»¤ìŠ¤í…€í•˜ê²Œ íž™ì—ì„œ í• ë‹¹ ë°›ëŠ” ì• ë“¤ì€ ì „ë¶€ ë©”ëª¨ë¦¬ ì •ë³´ ë¶™ì—¬ì£¼ê¸°
 __declspec(align(MEMORY_ALLOCATION_ALIGNMENT))
 struct MemAllocInfo : SLIST_ENTRY
 {
 	MemAllocInfo(int size) : mAllocSize(size), mExtraInfo(-1)
 	{}
 	
-	long mAllocSize; ///< MemAllocInfo°¡ Æ÷ÇÔµÈ Å©±â
-	long mExtraInfo; ///< ±âÅ¸ Ãß°¡ Á¤º¸ (¿¹: Å¸ÀÔ °ü·Ã Á¤º¸ µî)
+	long mAllocSize; ///< MemAllocInfoê°€ í¬í•¨ëœ í¬ê¸°
+	long mExtraInfo; ///< ê¸°íƒ€ ì¶”ê°€ ì •ë³´ (ì˜ˆ: íƒ€ìž… ê´€ë ¨ ì •ë³´ ë“±)
 
-}; ///< total 16 ¹ÙÀÌÆ®
+}; ///< total 16 ë°”ì´íŠ¸
 
 inline void* AttachMemAllocInfo(MemAllocInfo* header, int size)
 {
@@ -38,7 +38,7 @@ public:
 	
 
 private:
-	SLIST_HEADER mFreeList; ///< ¹Ýµå½Ã Ã¹¹øÂ° À§Ä¡
+	SLIST_HEADER mFreeList; ///< ë°˜ë“œì‹œ ì²«ë²ˆì§¸ ìœ„ì¹˜
 
 	const DWORD mAllocSize;
 	volatile long mAllocCount = 0;
@@ -55,12 +55,12 @@ public:
 private:
 	enum Config
 	{
-		/// ÇÔºÎ·Î ¹Ù²Ù¸é ¾ÈµÊ. Ã¶ÀúÈ÷ °è»êÈÄ ¹Ù²Ü °Í
-		MAX_SMALL_POOL_COUNT = 1024/32 + 1024/128 + 2048/256, ///< ~1024±îÁö 32´ÜÀ§, ~2048±îÁö 128´ÜÀ§, ~4096±îÁö 256´ÜÀ§
+		/// í•¨ë¶€ë¡œ ë°”ê¾¸ë©´ ì•ˆë¨. ì² ì €ížˆ ê³„ì‚°í›„ ë°”ê¿€ ê²ƒ
+		MAX_SMALL_POOL_COUNT = 1024/32 + 1024/128 + 2048/256, ///< ~1024ê¹Œì§€ 32ë‹¨ìœ„, ~2048ê¹Œì§€ 128ë‹¨ìœ„, ~4096ê¹Œì§€ 256ë‹¨ìœ„
 		MAX_ALLOC_SIZE = 4096
 	};
 
-	/// ¿øÇÏ´Â Å©±âÀÇ ¸Þ¸ð¸®¸¦ °¡Áö°í ÀÖ´Â Ç®¿¡ O(1) access¸¦ À§ÇÑ Å×ÀÌºí
+	/// ì›í•˜ëŠ” í¬ê¸°ì˜ ë©”ëª¨ë¦¬ë¥¼ ê°€ì§€ê³  ìžˆëŠ” í’€ì— O(1) accessë¥¼ ìœ„í•œ í…Œì´ë¸”
 	SmallSizeMemoryPool* mSmallSizeMemoryPoolTable[MAX_ALLOC_SIZE+1];
 
 };
@@ -68,7 +68,7 @@ private:
 extern MemoryPool* GMemoryPool;
 
 
-/// ¿ä³ðÀ» »ó¼Ó ¹Þ¾Æ¾ß¸¸ xnew/xdelete »ç¿ëÇÒ ¼ö ÀÖ°Ô...
+/// ìš”ë†ˆì„ ìƒì† ë°›ì•„ì•¼ë§Œ xnew/xdelete ì‚¬ìš©í•  ìˆ˜ ìžˆê²Œ...
 struct PooledAllocatable {};
 
 

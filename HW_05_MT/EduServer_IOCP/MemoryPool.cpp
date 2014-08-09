@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "Exception.h"
 #include "MemoryPool.h"
 
@@ -93,9 +93,9 @@ void* MemoryPool::Allocate(int size)
 void MemoryPool::Deallocate(void* ptr, long extraInfo)
 {
 	MemAllocInfo* header = DetachMemAllocInfo(ptr);
-	header->mExtraInfo = extraInfo; ///< ÃÖ±Ù ÇÒ´ç¿¡ °ü·ÃµÈ Á¤º¸ ÈùÆ®
+	header->mExtraInfo = extraInfo; ///< ìµœê·¼ í• ë‹¹ì— ê´€ë ¨ëœ ì •ë³´ ížŒíŠ¸
 	
-	long realAllocSize = InterlockedExchange(&header->mAllocSize, 0); ///< µÎ¹ø ÇØÁ¦ Ã¼Å© À§ÇØ
+	long realAllocSize = InterlockedExchange(&header->mAllocSize, 0); ///< ë‘ë²ˆ í•´ì œ ì²´í¬ ìœ„í•´
 	
 	CRASH_ASSERT(realAllocSize> 0);
 

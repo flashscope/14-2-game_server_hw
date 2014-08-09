@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #define MAX_IO_THREAD	4
 

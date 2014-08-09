@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "TypeTraits.h"
 #include "FastSpinlock.h"
@@ -17,7 +17,7 @@ public:
 	{
 		static_assert(true == std::is_convertible<T, SyncExecutable>::value, "T should be derived from SyncExecutable");
 
-		//TODO: mLockÀ¸·Î º¸È£ÇÑ »óÅÂ¿¡¼­, memfunc¸¦ ½ÇÇàÇÏ°í °á°ú°ª RÀ» ¸®ÅÏ
+		//TODO: mLockìœ¼ë¡œ ë³´í˜¸í•œ ìƒíƒœì—ì„œ, memfuncë¥¼ ì‹¤í–‰í•˜ê³  ê²°ê³¼ê°’ Rì„ ë¦¬í„´
 	
 	}
 	
@@ -30,10 +30,10 @@ public:
  	{
 		static_assert(true == std::is_convertible<T, SyncExecutable>::value, "T should be derived from SyncExecutable");
  		
-		//TODO: this Æ÷ÀÎÅÍ¸¦ std::shared_ptr<T>ÇüÅÂ·Î ¹İÈ¯.
-		//(HINT: ÀÌ Å¬·¡½º´Â std::enable_shared_from_this¿¡¼­ »ó¼Ó¹Ş¾Ò´Ù. ±×¸®°í static_pointer_cast »ç¿ë)
+		//TODO: this í¬ì¸í„°ë¥¼ std::shared_ptr<T>í˜•íƒœë¡œ ë°˜í™˜.
+		//(HINT: ì´ í´ë˜ìŠ¤ëŠ” std::enable_shared_from_thisì—ì„œ ìƒì†ë°›ì•˜ë‹¤. ê·¸ë¦¬ê³  static_pointer_cast ì‚¬ìš©)
 
-		return std::shared_ptr<T>((Player*)this); ///< ÀÌ·¸°Ô ÇÏ¸é ¾ÈµÉ°É???
+		return std::shared_ptr<T>((Player*)this); ///< ì´ë ‡ê²Œ í•˜ë©´ ì•ˆë ê±¸???
  	}
 
 private:
@@ -48,7 +48,7 @@ void DoSyncAfter(uint32_t after, T instance, F memfunc, Args&&... args)
 	static_assert(true == is_shared_ptr<T>::value, "T should be shared_ptr");
 	static_assert(true == std::is_convertible<T, std::shared_ptr<SyncExecutable>>::value, "T should be shared_ptr SyncExecutable");
 
-	//TODO: instanceÀÇ memfunc¸¦ bind·Î ¹­¾î¼­ LTimer->PushTimerJob() ¼öÇà
+	//TODO: instanceì˜ memfuncë¥¼ bindë¡œ ë¬¶ì–´ì„œ LTimer->PushTimerJob() ìˆ˜í–‰
 
 	
 }

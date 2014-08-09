@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "Exception.h"
 #include "ThreadLocal.h"
 #include "EduServer_IOCP.h"
@@ -45,7 +45,7 @@ void ClientSession::SessionReset()
 
 	mSocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED);
 
-	/// ÇÃ·¹ÀÌ¾î ¸®¼Â
+	/// í”Œë ˆì´ì–´ ë¦¬ì…‹
 	mPlayer->DoSync(&Player::PlayerReset);
 }
 
@@ -143,14 +143,14 @@ void ClientSession::AcceptCompletion()
 		printf_s("[DEBUG] PreRecv error: %d\n", GetLastError());
 	}
 
-	/// Å¸ÀÌ¸Ó Å×½ºÆ®¸¦ À§ÇØ 10ms ÈÄ¿¡ player °¡µ¿ ¤¡¤¡
+	/// íƒ€ì´ë¨¸ í…ŒìŠ¤íŠ¸ë¥¼ ìœ„í•´ 10ms í›„ì— player ê°€ë™ ã„±ã„±
 	DoSyncAfter(10, mPlayer, &Player::Start, 1000);
 }
 
 
 void ClientSession::DisconnectRequest(DisconnectReason dr)
 {
-	/// ÀÌ¹Ì ²÷°å°Å³ª ²÷±â´Â ÁßÀÌ°Å³ª
+	/// ì´ë¯¸ ëŠê²¼ê±°ë‚˜ ëŠê¸°ëŠ” ì¤‘ì´ê±°ë‚˜
 	if (0 == InterlockedExchange(&mConnected, 0))
 		return ;
 	
