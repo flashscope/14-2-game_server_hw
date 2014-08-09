@@ -68,31 +68,3 @@ void GCEDispatch(T instance, F memfunc, Args&&... args)
 	
 	GGrandCentralExecuter->DoDispatch(bind);
 }
-/*
-
-
-
-195 template < class T, class F, class... Args>
-196 void DoAsync( T instance, F memfunc, Args&&... args )
-197 {
-	198 	static_assert( true == is_shared_ptr<T>::value, "T should be shared_ptr" );
-	199 	static_assert( true == std::is_convertible<T, std::shared_ptr<AsyncExecutable>>::value, "T should be shared_ptr AsyncExecutable" );
-	200
-		201 	JobEntry* job = new JobEntry( std::bind( memfunc, instance, std::forward<Args>( args )... ) );
-	202
-
-		203 	std::static_pointer_cast<AsyncExecutable>( instance )->DoTask( job );
-	204 }
-205
-
-206 template < class T, class F, class... Args>
-207 void DoAsyncAfter( uint32_t after, T instance, F memfunc, Args&&... args )
-208 {
-	209 	static_assert( true == is_shared_ptr<T>::value, "T should be shared_ptr" );
-	210 	static_assert( true == std::is_convertible<T, std::shared_ptr<AsyncExecutable>>::value, "T should be shared_ptr AsyncExecutable" );
-	211
-
-		212 	JobEntry* job = new JobEntry( std::bind( memfunc, instance, std::forward<Args>( args )... ) );
-	213 	LTimer->PushTimerJob( std::static_pointer_cast<AsyncExecutable>( instance ), after, job );
-	214 }
-	*/

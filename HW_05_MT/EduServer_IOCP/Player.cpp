@@ -33,7 +33,7 @@ void Player::Start(int heartbeat)
 	mHeartBeat = heartbeat;
 	
 	/// ID 발급 및 플레잉어 맵에 등록
-	mPlayerId = GPlayerManager->RegisterPlayer(GetSharedFromThis<Player>());
+	mPlayerId = GPlayerManager->RegisterPlayer( GetSharedFromThis<Player>() );
 
 	/// 생명 불어넣기 ㄱㄱ
 	OnTick();
