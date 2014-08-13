@@ -1,4 +1,4 @@
-ï»¿#include "stdafx.h"
+#include "stdafx.h"
 #include "Exception.h"
 #include "ThreadLocal.h"
 #include "EduServer_IOCP.h"
@@ -16,8 +16,8 @@ OverlappedIOContext::OverlappedIOContext(ClientSession* owner, IOType ioType)
 	mSessionObject->AddRef();
 }
 
-ClientSession::ClientSession() : mBuffer(BUFSIZE), mConnected(0), mRefCount(0)
-, mPlayer(new Player(this)), mBufferLock(LO_LUGGAGE_CLASS)
+ClientSession::ClientSession(): mBuffer( BUFSIZE ), mConnected( 0 ), mRefCount( 0 ), mBufferLock( LO_LUGGAGE_CLASS )
+//, mPlayer(new Player(this)), mBufferLock(LO_LUGGAGE_CLASS)
 {
 	memset(&mClientAddr, 0, sizeof(SOCKADDR_IN));
 	mSocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED);
@@ -44,37 +44,69 @@ void ClientSession::SessionReset()
 	closesocket(mSocket);
 
 	mSocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, WSA_FLAG_OVERLAPPED);
-	
-	/// í”Œë ˆì´ì–´ ë¦¬ì…‹
-	mPlayer->DoSync(&Player::PlayerReset);
+
+	/// ÇÃ·¹ÀÌ¾î ¸®¼Â
+	//mPlayer->DoSync( &Player::PlayerReset );
 }
 
-bool ClientSession::PostAccept()
+bool ClientSession::PostConnect()
 {
 	CRASH_ASSERT(LThreadType == THREAD_MAIN);
 
-	OverlappedAcceptContext* acceptContext = new OverlappedAcceptContext(this);
+	// ¹ÙÀÎµå ÇÑ¹ø¸¸ ÇÏ°Ô Ã³¸®ÇØ¾ßÇÔ
+	{
+		struct sockaddr_in addr;
+		ZeroMemory( &addr, sizeof( addr ) );
+		addr.sin_family = AF_INET;
+		addr.sin_addr.s_addr = INADDR_ANY;
+		addr.sin_port = 0;
+		int rc = bind( mSocket, (SOCKADDR*)&addr, sizeof( addr ) );
+		if ( rc != 0 )
+		{
+			printf( "bind failed: %d\n", WSAGetLastError() );
+			return 1;
+		}
+	}
+
+
+	HANDLE handle = CreateIoCompletionPort( (HANDLE)mSocket, GIocpManager->GetComletionPort(), ( ULONG_PTR )this, 0 );
+	if ( handle != GIocpManager->GetComletionPort() )
+	{
+		printf_s( "[DEBUG] CreateIoCompletionPort error: %d\n", GetLastError() );
+		return false;
+	}
+
+
+	OverlappedConnectContext* connectContext = new OverlappedConnectContext( this );
 	DWORD bytes = 0;
 	DWORD flags = 0;
-	acceptContext->mWsaBuf.len = 0;
-	acceptContext->mWsaBuf.buf = nullptr;
+	connectContext->mWsaBuf.len = 0;
+	connectContext->mWsaBuf.buf = nullptr;
 
-	if (FALSE == AcceptEx(*GIocpManager->GetListenSocket(), mSocket, GIocpManager->mAcceptBuf, 0,
-		sizeof(SOCKADDR_IN)+16, sizeof(SOCKADDR_IN)+16, &bytes, (LPOVERLAPPED)acceptContext))
+	sockaddr_in addr;
+	ZeroMemory( &addr, sizeof( addr ) );
+	addr.sin_family = AF_INET;
+	addr.sin_addr.s_addr = inet_addr( "127.0.0.1" );
+	addr.sin_port = htons( CONNECT_PORT );
+
+
+	if ( FALSE == ConnectEx( mSocket, (SOCKADDR*)&addr, sizeof( addr ), NULL, 0, NULL, ( LPOVERLAPPED )connectContext ) )
 	{
 		if (WSAGetLastError() != WSA_IO_PENDING)
 		{
-			DeleteIoContext(acceptContext);
+			DeleteIoContext( connectContext );
 			printf_s("AcceptEx Error : %d\n", GetLastError());
 
 			return false;
 		}
 	}
 
+
+
 	return true;
 }
 
-void ClientSession::AcceptCompletion()
+void ClientSession::ConnectCompletion()
 {
 	CRASH_ASSERT(LThreadType == THREAD_IO_WORKER);
 	
@@ -88,13 +120,13 @@ void ClientSession::AcceptCompletion()
 	bool resultOk = true;
 	do 
 	{
-		if (SOCKET_ERROR == setsockopt(mSocket, SOL_SOCKET, SO_UPDATE_ACCEPT_CONTEXT, (char*)GIocpManager->GetListenSocket(), sizeof(SOCKET)))
+		if ( SOCKET_ERROR == setsockopt( mSocket, SOL_SOCKET, SO_UPDATE_CONNECT_CONTEXT, NULL, 0 ))
 		{
 			printf_s("[DEBUG] SO_UPDATE_ACCEPT_CONTEXT error: %d\n", GetLastError());
 			resultOk = false;
 			break;
 		}
-
+		/*
 		int opt = 1;
 		if (SOCKET_ERROR == setsockopt(mSocket, IPPROTO_TCP, TCP_NODELAY, (const char*)&opt, sizeof(int)))
 		{
@@ -126,7 +158,7 @@ void ClientSession::AcceptCompletion()
 			resultOk = false;
 			break;
 		}
-
+		*/
 	} while (false);
 
 
@@ -138,19 +170,19 @@ void ClientSession::AcceptCompletion()
 
 	printf_s("[DEBUG] Client Connected: IP=%s, PORT=%d\n", inet_ntoa(mClientAddr.sin_addr), ntohs(mClientAddr.sin_port));
 
-	if (false == PreRecv())
+	if (false == PreSend())
 	{
-		printf_s("[DEBUG] PreRecv error: %d\n", GetLastError());
+		printf_s("[DEBUG] PreSend error: %d\n", GetLastError());
 	}
 
-	/// íƒ€ì´ë¨¸ í…ŒìŠ¤íŠ¸ë¥¼ ìœ„í•´ 10ms í›„ì— player ê°€ë™ ã„±ã„±
-	DoSyncAfter(10, mPlayer, &Player::Start, 1000);
+	/// Å¸ÀÌ¸Ó Å×½ºÆ®¸¦ À§ÇØ 10ms ÈÄ¿¡ player °¡µ¿ ¤¡¤¡
+	//DoSyncAfter(10, mPlayer, &Player::Start, 1000);
 }
 
 
 void ClientSession::DisconnectRequest(DisconnectReason dr)
 {
-	/// ì´ë¯¸ ëŠê²¼ê±°ë‚˜ ëŠê¸°ëŠ” ì¤‘ì´ê±°ë‚˜
+	/// ÀÌ¹Ì ²÷°å°Å³ª ²÷±â´Â ÁßÀÌ°Å³ª
 	if (0 == InterlockedExchange(&mConnected, 0))
 		return ;
 	
@@ -174,6 +206,45 @@ void ClientSession::DisconnectCompletion(DisconnectReason dr)
 	ReleaseRef();
 }
 
+
+bool ClientSession::PreSend()
+{
+	if ( !IsConnected() )
+		return false;
+
+	FastSpinlockGuard criticalSection( mBufferLock );
+
+	DWORD transferred = 1;
+	transferred = mSocket % 10;// test
+
+
+	mBuffer.Commit( transferred );
+
+	if ( 0 == mBuffer.GetContiguiousBytes() )
+		return true;
+
+	OverlappedPreSendContext* sendContext = new OverlappedPreSendContext( this );
+
+	DWORD sendbytes = 0;
+	DWORD flags = 0;
+	sendContext->mWsaBuf.len = (ULONG)mBuffer.GetContiguiousBytes();
+	sendContext->mWsaBuf.buf = mBuffer.GetBufferStart();
+
+	/// start async send
+	if ( SOCKET_ERROR == WSASend( mSocket, &sendContext->mWsaBuf, 1, &sendbytes, flags, (LPWSAOVERLAPPED)sendContext, NULL ) )
+	{
+		if ( WSAGetLastError() != WSA_IO_PENDING )
+		{
+			DeleteIoContext( sendContext );
+			printf_s( "ClientSession::PostSend Error : %d\n", GetLastError() );
+
+			return false;
+		}
+
+	}
+
+	return true;
+}
 
 bool ClientSession::PreRecv()
 {
@@ -238,6 +309,14 @@ void ClientSession::RecvCompletion(DWORD transferred)
 {
 	FastSpinlockGuard criticalSection(mBufferLock);
 
+	// test code...
+	printf_s( "recv: [%d][%d][%d] ", transferred, mSocket % 10, sizeof(transferred) );
+	if ( transferred == ( mSocket % 10 ) )
+	{
+	printf_s( " - OK! \n" );
+	}
+	
+
 	mBuffer.Commit(transferred);
 }
 
@@ -247,7 +326,7 @@ bool ClientSession::PostSend()
 		return false;
 
 	FastSpinlockGuard criticalSection(mBufferLock);
-
+	
 	if ( 0 == mBuffer.GetContiguiousBytes() )
 		return true;
 
@@ -313,6 +392,10 @@ void DeleteIoContext(OverlappedIOContext* context)
 		delete static_cast<OverlappedSendContext*>(context);
 		break;
 
+	case IO_SEND_FIRST:
+		delete static_cast<OverlappedPreSendContext*>( context );
+		break;
+
 	case IO_RECV_ZERO:
 		delete static_cast<OverlappedPreRecvContext*>(context);
 		break;
@@ -327,6 +410,10 @@ void DeleteIoContext(OverlappedIOContext* context)
 
 	case IO_ACCEPT:
 		delete static_cast<OverlappedAcceptContext*>(context);
+		break;
+
+	case IO_CONNECT:
+		delete static_cast<OverlappedConnectContext*>( context );
 		break;
 
 	default:

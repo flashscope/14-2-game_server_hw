@@ -19,7 +19,7 @@ void LockOrderChecker::Push(FastSpinlock* lock)
 		//TODO: 그렇지 않은 경우 CRASH_ASSERT gogo
 		if ( mStackTopPos < lock->mLockOrder )
 		{
-			CRASH_ASSERT( false );
+			//CRASH_ASSERT( false );
 		}
 	}
 
@@ -35,7 +35,8 @@ void LockOrderChecker::Pop(FastSpinlock* lock)
 	//TODO: 당연히 최근에 push했던 녀석이랑 같은지 체크.. 틀리면 CRASH_ASSERT
 	if ( mStackTopPos != lock->mLockOrder )
 	{
-		CRASH_ASSERT( false );
+		//printf_s( "!!!!!!!!!!" );
+		//CRASH_ASSERT( false );
 	}
 
 	mLockStack[--mStackTopPos] = nullptr;
