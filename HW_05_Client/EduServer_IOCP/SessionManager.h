@@ -17,7 +17,7 @@ public:
 
 	void ReturnClientSession(ClientSession* client);
 
-	
+	bool NoMoreClients();
 
 private:
 	typedef xlist<ClientSession*>::type ClientList;

@@ -307,6 +307,7 @@ bool ClientSession::PostRecv()
 
 void ClientSession::RecvCompletion(DWORD transferred)
 {
+	mRecvBytes += transferred;
 	FastSpinlockGuard criticalSection(mBufferLock);
 
 	// test code...
@@ -322,13 +323,19 @@ void ClientSession::RecvCompletion(DWORD transferred)
 
 bool ClientSession::PostSend()
 {
-	if (!IsConnected())
+	if ( !IsConnected() )
+	{
 		return false;
+	}
+		
 
 	FastSpinlockGuard criticalSection(mBufferLock);
 	
 	if ( 0 == mBuffer.GetContiguiousBytes() )
+	{
 		return true;
+	}
+		
 
 	OverlappedSendContext* sendContext = new OverlappedSendContext(this);
 
@@ -355,8 +362,9 @@ bool ClientSession::PostSend()
 
 void ClientSession::SendCompletion(DWORD transferred)
 {
+	mSendBytes += transferred;
 	FastSpinlockGuard criticalSection(mBufferLock);
-
+	
 	mBuffer.Remove(transferred);
 }
 

@@ -25,17 +25,23 @@ int _tmain(int argc, _TCHAR* argv[])
 	GSessionManager = new SessionManager;
 	GIocpManager = new IocpManager;
 	GGrandCentralExecuter = new GrandCentralExecuter;
-	GPlayerManager = new PlayerManager;
+	//GPlayerManager = new PlayerManager;
 
 	/// main threadµµ lock order check...
 	LLockOrderChecker = new LockOrderChecker(-1);
 
+	CLIENT_RUNNING = TRUE;
 
-	if (false == GIocpManager->Initialize())
+	if ( false == GIocpManager->Initialize() )
+	{
 		return -1;
+	}
+		
 
-	if (false == GIocpManager->StartIoThreads())
+	if ( false == GIocpManager->StartIoThreads() )
+	{
 		return -1;
+	}
 
 	
 	printf_s("Start Client\n");

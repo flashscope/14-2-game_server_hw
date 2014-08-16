@@ -143,12 +143,20 @@ bool IocpManager::StartIoThreads()
 
 void IocpManager::StartConnect()
 {
-		
 	while (GSessionManager->SessionsConnect())
 	{
 		Sleep(100);
+		ULONGLONG tickTime = GetTickCount64();
+		UINT sec = tickTime / 1000;
+		if ( sec >= TIME_LIMIT)
+		{
+			CLIENT_RUNNING = FALSE;
+			if ( GSessionManager->NoMoreClients() )
+			{
+				break;
+			}
+		}
 	}
-
 }
 
 
@@ -245,6 +253,13 @@ unsigned int WINAPI IocpManager::IoWorkerThread(LPVOID lpParam)
 
 		if ( !completionOk )
 		{
+			/*
+			if ( FALSE == CLIENT_RUNNING )
+			{
+				theClient->DisconnectRequest( DR_TEST_TIME_OUT );
+			}
+			*/
+
 			/// connection closing
 			theClient->DisconnectRequest(DR_IO_REQUEST_ERROR);
 		}
@@ -265,6 +280,11 @@ bool IocpManager::ReceiveCompletion(ClientSession* client, OverlappedRecvContext
 {
 
 	client->RecvCompletion(dwTransferred);
+
+	if ( FALSE == CLIENT_RUNNING )
+	{
+		return false;
+	}
 
 	/// echo back
 	return client->PostSend();

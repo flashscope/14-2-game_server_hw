@@ -29,6 +29,7 @@ enum DisconnectReason
 	DR_ONCONNECT_ERROR,
 	DR_IO_REQUEST_ERROR,
 	DR_COMPLETION_ERROR,
+	DR_TEST_TIME_OUT,
 };
 
 struct OverlappedIOContext
@@ -131,6 +132,9 @@ public:
 
 private:
 	
+	UINT			mSendBytes = 0;
+	UINT			mRecvBytes = 0;
+
 	SOCKET			mSocket ;
 
 	SOCKADDR_IN		mClientAddr ;

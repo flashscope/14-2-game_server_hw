@@ -71,3 +71,13 @@ bool SessionManager::SessionsConnect()
 
 	return true;
 }
+
+bool SessionManager::NoMoreClients()
+{
+	if ( MAX_CONNECTION_SESSION == mFreeSessionList.size() )
+	{
+		return true;
+	}
+
+	return false;
+}
