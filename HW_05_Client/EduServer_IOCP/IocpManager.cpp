@@ -117,7 +117,7 @@ bool IocpManager::Initialize()
 		return FALSE;
 	}
 		
-
+	mCLIENT_RUNNING = TRUE;
 	
 	/// make session pool
 	GSessionManager->PrepareSessions();
@@ -143,20 +143,28 @@ bool IocpManager::StartIoThreads()
 
 void IocpManager::StartConnect()
 {
+
+	ULONGLONG startTickTime = GetTickCount64();
 	while (GSessionManager->SessionsConnect())
 	{
 		Sleep(100);
-		ULONGLONG tickTime = GetTickCount64();
-		UINT sec = tickTime / 1000;
+		ULONGLONG nowTickTime = GetTickCount64();
+		ULONGLONG sec = (nowTickTime - startTickTime) / 1000;
 		if ( sec >= TIME_LIMIT)
 		{
-			CLIENT_RUNNING = FALSE;
-			if ( GSessionManager->NoMoreClients() )
-			{
-				break;
-			}
+			mCLIENT_RUNNING = FALSE;
+			break;
 		}
 	}
+
+	// 그냥 강제 종료를 하겠다!
+	return;
+	/*
+	while ( !GSessionManager->NoMoreClients() )
+	{
+		printf_s( "waiting \n" );
+	}
+	*/
 }
 
 
@@ -189,6 +197,12 @@ unsigned int WINAPI IocpManager::IoWorkerThread(LPVOID lpParam)
 		ULONG_PTR completionKey = 0;
 
 		int ret = GetQueuedCompletionStatus(hComletionPort, &dwTransferred, (PULONG_PTR)&completionKey, (LPOVERLAPPED*)&context, GQCS_TIMEOUT);
+
+		// 이러면 안되지만!!
+		if ( mCLIENT_RUNNING == false )
+		{
+			return 0;
+		}
 
 		ClientSession* theClient = context ? context->mSessionObject : nullptr ;
 		
@@ -253,12 +267,12 @@ unsigned int WINAPI IocpManager::IoWorkerThread(LPVOID lpParam)
 
 		if ( !completionOk )
 		{
-			/*
-			if ( FALSE == CLIENT_RUNNING )
+			
+			if ( FALSE == mCLIENT_RUNNING )
 			{
 				theClient->DisconnectRequest( DR_TEST_TIME_OUT );
 			}
-			*/
+			
 
 			/// connection closing
 			theClient->DisconnectRequest(DR_IO_REQUEST_ERROR);
@@ -281,7 +295,7 @@ bool IocpManager::ReceiveCompletion(ClientSession* client, OverlappedRecvContext
 
 	client->RecvCompletion(dwTransferred);
 
-	if ( FALSE == CLIENT_RUNNING )
+	if ( !mCLIENT_RUNNING )
 	{
 		return false;
 	}

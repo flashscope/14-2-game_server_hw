@@ -310,13 +310,16 @@ void ClientSession::RecvCompletion(DWORD transferred)
 	mRecvBytes += transferred;
 	FastSpinlockGuard criticalSection(mBufferLock);
 
+	GIocpManager->GRecvBytes += sizeof( transferred );
+
 	// test code...
+	/*
 	printf_s( "recv: [%d][%d][%d] ", transferred, mSocket % 10, sizeof(transferred) );
 	if ( transferred == ( mSocket % 10 ) )
 	{
 	printf_s( " - OK! \n" );
 	}
-	
+	*/
 
 	mBuffer.Commit(transferred);
 }
@@ -364,7 +367,9 @@ void ClientSession::SendCompletion(DWORD transferred)
 {
 	mSendBytes += transferred;
 	FastSpinlockGuard criticalSection(mBufferLock);
-	
+
+	GIocpManager->GSendBytes += sizeof( transferred );
+
 	mBuffer.Remove(transferred);
 }
 

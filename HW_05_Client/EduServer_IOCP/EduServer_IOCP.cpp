@@ -30,7 +30,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	/// main threadµµ lock order check...
 	LLockOrderChecker = new LockOrderChecker(-1);
 
-	CLIENT_RUNNING = TRUE;
+	
 
 	if ( false == GIocpManager->Initialize() )
 	{
@@ -49,6 +49,10 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	GIocpManager->StartConnect(); ///< block here...
 
+
+	printf_s( "Recv:%d \n", GIocpManager->GRecvBytes );
+	printf_s( "Send:%d \n", GIocpManager->GSendBytes );
+
 	GIocpManager->Finalize();
 
 	printf_s("End Server\n");
@@ -56,6 +60,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	delete GIocpManager;
 	delete GSessionManager;
 	delete GMemoryPool;
+
+	getchar();
 
 	return 0;
 }

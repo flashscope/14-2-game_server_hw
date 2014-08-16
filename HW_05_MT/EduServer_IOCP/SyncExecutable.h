@@ -20,7 +20,7 @@ public:
 		//TODO: mLock으로 보호한 상태에서, memfunc를 실행하고 결과값 R을 리턴
 		FastSpinlockGuard guard( mLock );
 
-		std::function<R( Args... )> test = std::bind( memfunc,  args ... );
+		//std::function<R( Args... )> test = std::bind( memfunc,  args ... );
 
 		//auto test = std::bind( memfunc, std::forward<Args>( args )... );
 		//std::function<R( Args... )>* asd2 = test;
@@ -33,6 +33,8 @@ public:
 		//std::function<void() > asd = memfunc;
 		//memfunc( memfunc(args...));
 		//return ((memfunc) Args( args... ));
+
+		return std::bind( memfunc, static_cast<T*>( this ), std::forward<Args>( args )... )( );
 	}
 	
 

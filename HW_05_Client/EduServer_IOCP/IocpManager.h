@@ -8,6 +8,8 @@ struct OverlappedRecvContext;
 struct OverlappedDisconnectContext;
 struct OverlappedAcceptContext;
 
+static bool	mCLIENT_RUNNING;
+
 class IocpManager
 {
 public:
@@ -31,6 +33,11 @@ public:
 	static LPFN_ACCEPTEX mFnAcceptEx;
 	static LPFN_CONNECTEX mFnConnectEx;
 
+
+	// 시간도 없고 깔끔하게 안나온다!! 락잡고 그냥 일단 구현하자!
+	UINT			GSendBytes = 0;
+	UINT			GRecvBytes = 0;
+
 private:
 
 	static unsigned int WINAPI IoWorkerThread(LPVOID lpParam);
@@ -44,6 +51,7 @@ private:
 	HANDLE	mCompletionPort;
 	int		mIoThreadCount;
 
+	
 	//SOCKET	mListenSocket;
 };
 
