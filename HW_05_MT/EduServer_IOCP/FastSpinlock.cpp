@@ -82,7 +82,7 @@ void FastSpinlock::EnterReadLock()
 void FastSpinlock::LeaveReadLock()
 {
 	//TODO: mLockFlag 처리 
-	
+	InterlockedAdd( &mLockFlag, -1 );
 
 	if (mLockOrder != LO_DONT_CARE)
 		LLockOrderChecker->Pop(this);
