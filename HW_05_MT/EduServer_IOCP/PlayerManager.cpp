@@ -29,11 +29,15 @@ void PlayerManager::UnregisterPlayer(int playerId)
 int PlayerManager::GetCurrentPlayers(PlayerList& outList)
 {
 	//TODO-: mLock을 read모드로 접근해서 outList에 현재 플레이어들의 정보를 담고 total에는 현재 플레이어의 총 수를 반환.
-	mLock.EnterReadLock();
+	
+	FastSpinlockGuard readMode( mLock, false );
 
 	int total = 0;
-	total = static_cast<int>( outList.size() );
-	mLock.LeaveReadLock();
+	for ( auto iter = mPlayerMap.begin(); iter != mPlayerMap.end(); ++iter )
+	{
+		outList.push_back( iter->second );
+		++total;
+	}
 
 	return total;
 }

@@ -17,7 +17,7 @@ void Timer::PushTimerJob(SyncExecutablePtr owner, const TimerTask& task, uint64_
 	CRASH_ASSERT(LThreadType == THREAD_IO_WORKER);
 
 	//TODO-: mTimerJobQueue에 TimerJobElement를 push..
-	int64_t dueTimeTick = after + LTickCount;
+	int64_t dueTimeTick = after + GetTickCount64();
 
 	TimerJobElement timerJobElement( owner, task, dueTimeTick );
 	mTimerJobQueue.push( timerJobElement );

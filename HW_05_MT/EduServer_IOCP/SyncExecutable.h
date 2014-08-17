@@ -67,7 +67,9 @@ void DoSyncAfter(uint32_t after, T instance, F memfunc, Args&&... args)
 
 	//TODO-: instance의 memfunc를 bind로 묶어서 LTimer->PushTimerJob() 수행
 
-	auto bind = std::bind( memfunc, instance, std::forward<Args>( args )... );
-	LTimer->PushTimerJob( instance, bind, after );
+	//auto bind = std::bind( memfunc, instance, std::forward<Args>( args )... );
+	//LTimer->PushTimerJob( instance, bind, after );
+
+	LTimer->PushTimerJob( instance, std::bind( memfunc, instance, std::forward<Args>( args )... ), after );
 	
 }

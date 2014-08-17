@@ -20,7 +20,7 @@ public:
 		if (InterlockedIncrement64(&mRemainTaskCount) > 1)
 		{
 			//TODO: 이미 누군가 작업중이면 어떻게?
-			
+			mCentralTaskQueue.push( task );
 		}
 		else
 		{
@@ -35,6 +35,8 @@ public:
 				{
 					//TODO: task를 수행하고 mRemainTaskCount를 하나 감소 
 					// mRemainTaskCount가 0이면 break;
+					task();
+
 					if ( InterlockedDecrement64( &mRemainTaskCount ) == 0)
 					{
 						break;
@@ -64,7 +66,10 @@ void GCEDispatch(T instance, F memfunc, Args&&... args)
 	
 	//TODO: intance의 memfunc를 std::bind로 묶어서 전달
 
-	auto bind = std::bind( memfunc, instance, std::forward<Args>( args )... ) ;
+	//auto bind = std::bind( memfunc, instance, std::forward<Args>( args )... ) ;
 	
-	GGrandCentralExecuter->DoDispatch(bind);
+	//GGrandCentralExecuter->DoDispatch(bind);
+
+
+	GGrandCentralExecuter->DoDispatch( std::bind( memfunc, instance, std::forward<Args>( args )... ) );
 }
