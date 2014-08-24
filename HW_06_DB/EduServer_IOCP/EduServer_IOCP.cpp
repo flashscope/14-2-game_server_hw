@@ -17,6 +17,8 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	LThreadType = THREAD_MAIN;
 
+	_wsetlocale( LC_ALL, L"korean" );
+
 	/// for dump on crash
 	SetUnhandledExceptionFilter(ExceptionFilter);
 

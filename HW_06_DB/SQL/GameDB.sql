@@ -36,12 +36,13 @@ IF EXISTS ( select * from sys.procedures where name='spCreatePlayer' )
 GO
 
 CREATE PROCEDURE [dbo].[spCreatePlayer]
-	@name	NVARCHAR(32) = NULL OUTPUT
+	@name	NVARCHAR(32) = NULL
 AS
-BEGIN
+BEGIN 
+	SET NOCOUNT ON
     --todo: 해당 이름의 플레이어를 생성하고 플레이어의 identity를 리턴, [createTime]는 현재 생성 날짜로 설정
 	INSERT INTO PlayerTable (playerName, createTime, isValid) VALUES (@name, CURRENT_TIMESTAMP, 0)
-	SELECT @name = cast( SCOPE_IDENTITY() as NVARCHAR(32) )
+	SELECT SCOPE_IDENTITY()
 END
 GO
 
@@ -54,7 +55,9 @@ CREATE PROCEDURE [dbo].[spDeletePlayer]
 AS
 BEGIN
 	--//todo: 해당 플레이어 삭제
+	SET NOCOUNT ON
 	DELETE FROM PlayerTable WHERE playerUID = @playerUID
+	SELECT @@ROWCOUNT
 END
 GO
 
@@ -69,11 +72,13 @@ CREATE PROCEDURE [dbo].[spUpdatePlayerPosition]
 	@posZ	FLOAT
 AS
 BEGIN
+	SET NOCOUNT ON
     --// todo: 해당 플레이어의 정보(x,y,z) 업데이트 
 	UPDATE PlayerTable SET currentPosX = @posX,
 						   currentPosY = @posY,
 						   currentPosZ = @posZ
 						   WHERE playerUID = @playerUID
+	SELECT @@ROWCOUNT
 END
 GO
 
@@ -118,7 +123,7 @@ AS
 BEGIN
     --todo: 플레이어 정보  [playerName], [currentPosX], [currentPosY], [currentPosZ], [isValid], [comment]  얻어오기
 	SELECT [playerName], [currentPosX], [currentPosY], [currentPosZ], [isValid], [comment] FROM PlayerTable WHERE playerUID = @playerUID
-END		   
+END	
 GO		   
 
 
@@ -130,7 +135,7 @@ GO
 --EXEC spUpdatePlayerComment 100, "가나다라 플레이어 코멘트 테스트 kekeke"
 --GO
 
---EXEC spUpdatePlayerValid 100, 1
+--EXEC spUpdatePlayerValid 101, 1
 --GO
 
 --EXEC spLoadPlayer 100
@@ -138,5 +143,6 @@ GO
 
 --EXEC spDeletePlayer 100
 --GO
+
 
 --SELECT * FROM PlayerTable

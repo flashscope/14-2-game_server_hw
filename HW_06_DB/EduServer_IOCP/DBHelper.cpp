@@ -33,6 +33,7 @@ DbHelper::~DbHelper()
 
 bool DbHelper::Initialize(const wchar_t* connInfoStr, int workerThreadCount)
 {
+
 	//--todo: mSqlConnPool, mDbWorkerThreadCount를 워커스레스 수에 맞추어 초기화
 	mDbWorkerThreadCount = workerThreadCount;
 	mSqlConnPool = new SQL_CONN[workerThreadCount];
@@ -193,12 +194,13 @@ bool DbHelper::BindParamBool(bool* param)
 	return true;
 }
 
-bool DbHelper::BindParamText(const wchar_t* text)
+bool DbHelper::BindParamText( const wchar_t* text )
 {
+
+	//--todo: 유니코드 문자열 바인딩  <- 구현
 	size_t len = wcslen( text );
-	//--todo: 유니코드 문자열 바인딩
 	SQLRETURN ret = SQLBindParameter( mCurrentSqlHstmt, mCurrentBindParam++, SQL_PARAM_INPUT,
-									  SQL_C_WCHAR, SQL_WVARCHAR, len, 0, &text, 0, NULL );
+									  SQL_C_WCHAR, SQL_WVARCHAR, len, 0, (SQLPOINTER)text, 0, NULL );
 
 	if ( SQL_SUCCESS != ret && SQL_SUCCESS_WITH_INFO != ret )
 	{
