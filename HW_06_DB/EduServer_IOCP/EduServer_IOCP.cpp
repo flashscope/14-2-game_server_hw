@@ -48,6 +48,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	delete GIocpManager;
 	delete GClientSessionManager;
 
+	getchar();
 	return 0;
 }
 

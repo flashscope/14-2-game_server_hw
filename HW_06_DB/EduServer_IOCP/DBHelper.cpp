@@ -3,7 +3,10 @@
 #include "ThreadLocal.h"
 #include "DBHelper.h"
 
-//todo: DbHelper의 static 멤버변수 초기화
+//--todo: DbHelper의 static 멤버변수 초기화
+SQLHENV DbHelper::mSqlHenv = nullptr;
+SQL_CONN* DbHelper::mSqlConnPool = nullptr;
+int DbHelper::mDbWorkerThreadCount = 0;
 
 
 DbHelper::DbHelper()
@@ -20,14 +23,20 @@ DbHelper::DbHelper()
 
 DbHelper::~DbHelper()
 {
-	//todo: SQLFreeStmt를 이용하여 현재 SQLHSTMT 해제(unbind, 파라미터리셋, close 순서로)
-	
+	//--todo: SQLFreeStmt를 이용하여 현재 SQLHSTMT 해제(unbind, 파라미터리셋, close 순서로)
+	SQLFreeStmt( mCurrentSqlHstmt, SQL_UNBIND );
+	SQLFreeStmt( mCurrentSqlHstmt, SQL_RESET_PARAMS );
+	SQLFreeStmt( mCurrentSqlHstmt, SQL_CLOSE );
+
 	mSqlConnPool[LWorkerThreadId].mUsingNow = false;
 }
 
 bool DbHelper::Initialize(const wchar_t* connInfoStr, int workerThreadCount)
 {
-	//todo: mSqlConnPool, mDbWorkerThreadCount를 워커스레스 수에 맞추어 초기화
+	//--todo: mSqlConnPool, mDbWorkerThreadCount를 워커스레스 수에 맞추어 초기화
+	mDbWorkerThreadCount = workerThreadCount;
+	mSqlConnPool = new SQL_CONN[workerThreadCount];
+
 
 	if (SQL_SUCCESS != SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &mSqlHenv))
 	{
@@ -45,14 +54,24 @@ bool DbHelper::Initialize(const wchar_t* connInfoStr, int workerThreadCount)
 	/// 스레드별로 SQL connection을 풀링하는 방식. 즉, 스레드마다 SQL서버로의 연결을 갖는다.
 	for (int i = 0; i < mDbWorkerThreadCount; ++i)
 	{
-		//todo: SQLAllocHandle을 이용하여 SQL_CONN의 mSqlHdbc 핸들 사용가능하도록 처리
-		
+		//--todo: SQLAllocHandle을 이용하여 SQL_CONN의 mSqlHdbc 핸들 사용가능하도록 처리
+		SQLAllocHandle( SQL_HANDLE_DBC, mSqlHenv, &mSqlConnPool[i].mSqlHdbc );
+
+
 		SQLSMALLINT resultLen = 0;
 		
-		//todo: SQLDriverConnect를 이용하여 SQL서버에 연결하고 그 핸들을 SQL_CONN의 mSqlHdbc에 할당
-		SQLRETURN ret = 0; // =  SQLDriverConnect(...);
+		//--todo: SQLDriverConnect를 이용하여 SQL서버에 연결하고 그 핸들을 SQL_CONN의 mSqlHdbc에 할당
+		SQLRETURN ret = SQLDriverConnect( mSqlConnPool[i].mSqlHdbc,
+										  NULL,
+										  (SQLWCHAR *)connInfoStr,
+										  SQL_NTS,
+										  NULL,
+										  0,
+										  NULL,
+										  SQL_DRIVER_NOPROMPT
+										  );
 
-		if (SQL_SUCCESS != ret && SQL_SUCCESS_WITH_INFO != ret)
+			if ( SQL_SUCCESS != ret && SQL_SUCCESS_WITH_INFO != ret )
 		{
 			SQLWCHAR sqlState[1024] = { 0, } ;
 			SQLINTEGER nativeError = 0;
@@ -62,11 +81,12 @@ bool DbHelper::Initialize(const wchar_t* connInfoStr, int workerThreadCount)
 			SQLGetDiagRec(SQL_HANDLE_DBC, mSqlConnPool[i].mSqlHdbc, 1, sqlState, &nativeError, msgText, 1024, &textLen);
 
 			wprintf_s(L"DbHelper Initialize SQLDriverConnect failed: %s \n", msgText);
-
 			return false;
 		}
 
-		//todo: SQLAllocHandle를 이용하여 SQL_CONN의 mSqlHstmt 핸들 사용가능하도록 처리
+		//--todo: SQLAllocHandle를 이용하여 SQL_CONN의 mSqlHstmt 핸들 사용가능하도록 처리
+		SQLAllocHandle( SQL_HANDLE_STMT, mSqlConnPool[i].mSqlHdbc, &mSqlConnPool[i].mSqlHstmt );
+
 	
 	}
 
@@ -79,11 +99,16 @@ void DbHelper::Finalize()
 	for (int i = 0; i < mDbWorkerThreadCount; ++i)
 	{
 		SQL_CONN* currConn = &mSqlConnPool[i];
-		if (currConn->mSqlHstmt)
-			SQLFreeHandle(SQL_HANDLE_STMT, currConn->mSqlHstmt);
+		if ( currConn->mSqlHstmt )
+		{
+			SQLFreeHandle( SQL_HANDLE_STMT, currConn->mSqlHstmt );
+		}
+			
 
-		if (currConn->mSqlHdbc)
-			SQLFreeHandle(SQL_HANDLE_DBC, currConn->mSqlHdbc);
+		if ( currConn->mSqlHdbc )
+		{
+			SQLFreeHandle( SQL_HANDLE_DBC, currConn->mSqlHdbc );
+		}
 	}
 
 	delete[] mSqlConnPool;
@@ -93,8 +118,9 @@ void DbHelper::Finalize()
 
 bool DbHelper::Execute(const wchar_t* sqlstmt)
 {
-	//todo: mCurrentSqlHstmt핸들 사용하여 sqlstmt를 수행.  
-	SQLRETURN ret = 0; //= SQLExecDirect(...);
+	//--todo: mCurrentSqlHstmt핸들 사용하여 sqlstmt를 수행.  
+	SQLRETURN ret = SQLExecDirect( mCurrentSqlHstmt, (SQLWCHAR *)sqlstmt, SQL_NTS );
+
 	if (SQL_SUCCESS != ret && SQL_SUCCESS_WITH_INFO != ret)
 	{
 		PrintSqlStmtError();
@@ -106,8 +132,8 @@ bool DbHelper::Execute(const wchar_t* sqlstmt)
 
 bool DbHelper::FetchRow()
 {
-	//todo: mCurrentSqlHstmt가 들고 있는 내용 fetch
-	SQLRETURN ret = 0; 
+	//--todo: mCurrentSqlHstmt가 들고 있는 내용 fetch
+	SQLRETURN ret = SQLFetch( mCurrentSqlHstmt );
 
 	if (SQL_SUCCESS != ret && SQL_SUCCESS_WITH_INFO != ret)
 	{
@@ -126,8 +152,9 @@ bool DbHelper::FetchRow()
 
 bool DbHelper::BindParamInt(int* param)
 {
-	//todo: int형 파라미터 바인딩
-	SQLRETURN ret = 0; // = SQLBindParameter(...);
+	//--todo: int형 파라미터 바인딩
+	SQLRETURN ret = SQLBindParameter( mCurrentSqlHstmt, mCurrentBindParam++, SQL_PARAM_INPUT,
+									  SQL_C_LONG, SQL_IS_INTEGER, 0, 0, param, 0, NULL );
 
 	if (SQL_SUCCESS != ret && SQL_SUCCESS_WITH_INFO != ret)
 	{
@@ -154,9 +181,9 @@ bool DbHelper::BindParamFloat(float* param)
 
 bool DbHelper::BindParamBool(bool* param)
 {
-	//todo: bool형 파라미터 바인딩
-	SQLRETURN ret = 0; // = SQLBindParameter(...);
-
+	//--todo: bool형 파라미터 바인딩
+	SQLRETURN ret = SQLBindParameter( mCurrentSqlHstmt, mCurrentBindParam++, SQL_PARAM_INPUT,
+									  SQL_C_BIT, SQL_BIT, 0, 0, param, 0, NULL );
 	if (SQL_SUCCESS != ret && SQL_SUCCESS_WITH_INFO != ret)
 	{
 		PrintSqlStmtError();
@@ -169,10 +196,11 @@ bool DbHelper::BindParamBool(bool* param)
 bool DbHelper::BindParamText(const wchar_t* text)
 {
 
-	//todo: 유니코드 문자열 바인딩
-	SQLRETURN ret = 0; // = SQLBindParameter(...);
+	//--todo: 유니코드 문자열 바인딩
+	SQLRETURN ret = SQLBindParameter( mCurrentSqlHstmt, mCurrentBindParam++, SQL_PARAM_INPUT,
+									  SQL_C_WCHAR, SQL_WCHAR, 0, 0, &text, 0, NULL );
 
-	if (SQL_SUCCESS != ret && SQL_SUCCESS_WITH_INFO != ret)
+	if ( SQL_SUCCESS != ret && SQL_SUCCESS_WITH_INFO != ret )
 	{
 		PrintSqlStmtError();
 		return false;
@@ -195,8 +223,8 @@ void DbHelper::BindResultColumnInt(int* r)
 void DbHelper::BindResultColumnFloat(float* r)
 {
 	SQLLEN len = 0;
-	//todo: float형 결과 컬럼 바인딩
-	SQLRETURN ret = 0;
+	//--todo: float형 결과 컬럼 바인딩
+	SQLRETURN ret = SQLBindCol( mCurrentSqlHstmt, mCurrentResultCol++, SQL_C_FLOAT, r, 4, &len );
 
 	if (SQL_SUCCESS != ret && SQL_SUCCESS_WITH_INFO != ret)
 	{
@@ -217,8 +245,8 @@ void DbHelper::BindResultColumnBool(bool* r)
 void DbHelper::BindResultColumnText(wchar_t* text, size_t count)
 {
 	SQLLEN len = 0;
-	//todo: wchar_t*형 결과 컬럼 바인딩
-	SQLRETURN ret = 0;
+	//--todo: wchar_t*형 결과 컬럼 바인딩
+	SQLRETURN ret = SQLBindCol( mCurrentSqlHstmt, mCurrentResultCol++, SQL_C_WCHAR, text, count, &len );
 
 	if (SQL_SUCCESS != ret && SQL_SUCCESS_WITH_INFO != ret)
 	{

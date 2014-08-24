@@ -5,6 +5,7 @@
 #include "ClientSession.h"
 #include "IocpManager.h"
 #include "ClientSessionManager.h"
+//#include "SQLTest.h"
 
 #define CLIENT_BUFSIZE	65536
 
@@ -68,6 +69,8 @@ bool ClientSession::PostAccept()
 	return true;
 }
 
+
+
 void ClientSession::AcceptCompletion()
 {
 	CRASH_ASSERT(LThreadType == THREAD_IO_WORKER);
@@ -78,6 +81,9 @@ void ClientSession::AcceptCompletion()
 		CRASH_ASSERT(false);
 		return;
 	}
+
+	// DB TEST
+	//DbTestFunc();
 
 	bool resultOk = true;
 	do 

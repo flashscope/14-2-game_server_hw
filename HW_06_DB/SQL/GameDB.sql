@@ -10,8 +10,13 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
---todo: if exists를 사용하여 PlayerTable 테이블이 존재한다면 해당 테이블 드랍
+--//todo: if exists를 사용하여 PlayerTable 테이블이 존재한다면 해당 테이블 드랍
 
+IF EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'[dbo].[PlayerTable]')
+ AND OBJECTPROPERTY(id, N'IsUserTable') = 1)
+	DROP TABLE [dbo].[PlayerTable];
+
+GO
 
 CREATE TABLE [dbo].[PlayerTable](
 	[playerUID] [int] NOT NULL PRIMARY KEY IDENTITY(100, 1),
@@ -31,11 +36,12 @@ IF EXISTS ( select * from sys.procedures where name='spCreatePlayer' )
 GO
 
 CREATE PROCEDURE [dbo].[spCreatePlayer]
-	@name	NVARCHAR(32)
+	@name	NVARCHAR(32) = NULL OUTPUT
 AS
 BEGIN
     --todo: 해당 이름의 플레이어를 생성하고 플레이어의 identity를 리턴, [createTime]는 현재 생성 날짜로 설정
-	
+	INSERT INTO PlayerTable (playerName, createTime, isValid) VALUES (@name, CURRENT_TIMESTAMP, 0)
+	SELECT @name = cast( SCOPE_IDENTITY() as NVARCHAR(32) )
 END
 GO
 
@@ -47,8 +53,8 @@ CREATE PROCEDURE [dbo].[spDeletePlayer]
 	@playerUID	INT
 AS
 BEGIN
-	--todo: 해당 플레이어 삭제
-
+	--//todo: 해당 플레이어 삭제
+	DELETE FROM PlayerTable WHERE playerUID = @playerUID
 END
 GO
 
@@ -63,8 +69,11 @@ CREATE PROCEDURE [dbo].[spUpdatePlayerPosition]
 	@posZ	FLOAT
 AS
 BEGIN
-    -- todo: 해당 플레이어의 정보(x,y,z) 업데이트 
-	
+    --// todo: 해당 플레이어의 정보(x,y,z) 업데이트 
+	UPDATE PlayerTable SET currentPosX = @posX,
+						   currentPosY = @posY,
+						   currentPosZ = @posZ
+						   WHERE playerUID = @playerUID
 END
 GO
 
@@ -108,11 +117,9 @@ CREATE PROCEDURE [dbo].[spLoadPlayer]
 AS
 BEGIN
     --todo: 플레이어 정보  [playerName], [currentPosX], [currentPosY], [currentPosZ], [isValid], [comment]  얻어오기
-	
+	SELECT [playerName], [currentPosX], [currentPosY], [currentPosZ], [isValid], [comment] FROM PlayerTable WHERE playerUID = @playerUID
 END		   
 GO		   
-
-
 
 
 --저장 프로시저 테스트
@@ -132,4 +139,4 @@ GO
 --EXEC spDeletePlayer 100
 --GO
 
-	
+--SELECT * FROM PlayerTable

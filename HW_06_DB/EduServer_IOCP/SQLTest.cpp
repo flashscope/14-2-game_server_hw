@@ -1,8 +1,8 @@
 #include "stdafx.h"
+#include "SQLTest.h"
 #include "SQLStatement.h"
 #include "DBHelper.h"
-
-//todo: 아래의 DbTestFunc 로직이 잘 수행되는지 테스트! (아래의 함수를 ClientSession내의 적절한 곳에서 여러번 호출시켜볼 것)
+//--todo: 아래의 DbTestFunc 로직이 잘 수행되는지 테스트! (아래의 함수를 ClientSession내의 적절한 곳에서 여러번 호출시켜볼 것)
 
 void DbTestFunc()
 {
