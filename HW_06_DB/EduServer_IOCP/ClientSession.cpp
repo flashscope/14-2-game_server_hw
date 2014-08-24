@@ -5,7 +5,7 @@
 #include "ClientSession.h"
 #include "IocpManager.h"
 #include "ClientSessionManager.h"
-//#include "SQLTest.h"
+#include "SQLTest.h"
 
 #define CLIENT_BUFSIZE	65536
 
@@ -83,7 +83,7 @@ void ClientSession::AcceptCompletion()
 	}
 
 	// DB TEST
-	//DbTestFunc();
+	DbTestFunc();
 
 	bool resultOk = true;
 	do 

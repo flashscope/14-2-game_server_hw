@@ -80,7 +80,7 @@ bool DbHelper::Initialize(const wchar_t* connInfoStr, int workerThreadCount)
 
 			SQLGetDiagRec(SQL_HANDLE_DBC, mSqlConnPool[i].mSqlHdbc, 1, sqlState, &nativeError, msgText, 1024, &textLen);
 
-			wprintf_s(L"DbHelper Initialize SQLDriverConnect failed: %s \n", msgText);
+ 			wprintf_s(L"DbHelper Initialize SQLDriverConnect failed: %s \n", msgText);
 			return false;
 		}
 
@@ -195,10 +195,10 @@ bool DbHelper::BindParamBool(bool* param)
 
 bool DbHelper::BindParamText(const wchar_t* text)
 {
-
+	size_t len = wcslen( text );
 	//--todo: 유니코드 문자열 바인딩
 	SQLRETURN ret = SQLBindParameter( mCurrentSqlHstmt, mCurrentBindParam++, SQL_PARAM_INPUT,
-									  SQL_C_WCHAR, SQL_WCHAR, 0, 0, &text, 0, NULL );
+									  SQL_C_WCHAR, SQL_WVARCHAR, len, 0, &text, 0, NULL );
 
 	if ( SQL_SUCCESS != ret && SQL_SUCCESS_WITH_INFO != ret )
 	{
