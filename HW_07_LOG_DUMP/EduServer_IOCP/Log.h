@@ -38,7 +38,7 @@ private:
 	}	\
 	if (LThreadType != THREAD_MAIN)	\
 	{	\
-		/*todo: 스레드로컬에 함수 호출(__FUNCSIG__) 기록남기기*/ \
+		LThreadCallHistory->Append(__FUNCSIG__);\
 	}	
 	
 
@@ -54,7 +54,11 @@ public:
 
 	inline void Append(const char* funcsig, int64_t elapsed)
 	{
-		//todo: mElapsedFuncSig, mElapsedTime에 정보(funcsig, elapsed) 남기기
+		//-todo: mElapsedFuncSig, mElapsedTime에 정보(funcsig, elapsed) 남기기
+		mElapsedFuncSig[mCounter] = funcsig;
+		mElapsedTime[mCounter] = elapsed;
+
+		++mCounter;
 	}
 
 	void DumpOut(std::ostream& ost = std::cout);
@@ -87,7 +91,8 @@ public:
 	{
 		if (LThreadType != THREAD_MAIN)
 		{
-			//todo: LThreadCallElapsedRecord에 함수 수행 시간 남기기
+			//-todo: LThreadCallElapsedRecord에 함수 수행 시간 남기기
+			LThreadCallElapsedRecord->Append( mFuncSig, GetTickCount64() - mStartTick );
 		}
 	}
 
@@ -120,7 +125,12 @@ namespace LoggerUtil
 	{
 		__int64 index = _InterlockedIncrement64(&gCurrentLogIndex) - 1;
 		
-		//todo: gLogEvents에 LogEvent정보 남기기
+		//-todo: gLogEvents에 LogEvent정보 남기기
+		gLogEvents[index % MAX_LOG_SIZE].mAdditionalInfo = info;
+		gLogEvents[index % MAX_LOG_SIZE].mMessage = msg;
+		gLogEvents[index % MAX_LOG_SIZE].mThreadId = GetCurrentThreadId();
+
+
 	}
 
 	void EventLogDumpOut(std::ostream& ost = std::cout);

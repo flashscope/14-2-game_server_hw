@@ -1,6 +1,6 @@
 #pragma once
 
-//todo: 아래 설정은 여러분들의 상황에 맞게 고치기
+//-todo: 아래 설정은 여러분들의 상황에 맞게 고치기
 
 #define LISTEN_PORT		9001
 #define MAX_CONNECTION	10000

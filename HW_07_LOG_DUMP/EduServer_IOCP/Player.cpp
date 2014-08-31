@@ -93,14 +93,16 @@ void Player::ResponseUpdateValidation(bool isValid)
 
 void Player::TestCreatePlayerData(const wchar_t* newName)
 {
-	//todo: DB스레드풀에 newName에 해당하는 플레이어 생성 작업을 수행시켜보기
+	//-todo: DB스레드풀에 newName에 해당하는 플레이어 생성 작업을 수행시켜보기
 	CreatePlayerDataContext* context = new CreatePlayerDataContext( mSession, mPlayerId );
-	//context->mPlayerName = newName;
+	context->SetPlayerName( newName );
 	GDatabaseManager->PostDatabsaseRequest( context );
 }
 
 void Player::TestDeletePlayerData(int playerId)
 {
-	//todo: DB스레드풀에 playerId에 해당하는 플레이어 생성 삭제 작업을 수행시켜보기
+	//-todo: DB스레드풀에 playerId에 해당하는 플레이어 생성 삭제 작업을 수행시켜보기
+	DeletePlayerDataContext* context = new DeletePlayerDataContext( mSession, mPlayerId );
+	GDatabaseManager->PostDatabsaseRequest( context );
 }
 

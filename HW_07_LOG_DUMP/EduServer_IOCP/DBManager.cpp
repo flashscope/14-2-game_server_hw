@@ -6,6 +6,7 @@
 #include "DBThread.h"
 #include "DBManager.h"
 #include "DBHelper.h"
+#include "IocpManager.h"
 
 DBManager* GDatabaseManager = nullptr;
 
@@ -83,6 +84,6 @@ unsigned int WINAPI DBManager::DbWorkerThread(LPVOID lpParam)
 
 void DBManager::PostDatabsaseRequest(DatabaseJobContext* dbContext)
 {
-	//todo: PQCS를 이용하여 dbContext를 mDbCompletionPort에 보내기
-
+	//-todo: PQCS를 이용하여 dbContext를 mDbCompletionPort에 보내기
+	GIocpManager->PostDatabaseResult( dbContext );
 }
