@@ -41,6 +41,12 @@ void DBThread::DoDatabaseJob()
 	
 	DatabaseJobContext* dbContext = reinterpret_cast<DatabaseJobContext*>(overlapped);
 	//todo: dbContext의 SQL을 실행하고 그 결과를 IO thread풀로 보내기
+	if ( dbContext->SQLExecute() )
+	{
+		dbContext->OnResult();
+	}
 
+	// make switch deleter? like OverlappedIOContext in deleter...
+	delete dbContext;
 }
 

@@ -17,19 +17,25 @@ DatabaseJobContext::~DatabaseJobContext()
 
 bool DatabaseJobContext::SQLExecute()
 {
-	//todo: 이 함수는 반드시 DB스레드풀에서 수행되어야 한다. 그렇지 않으면 CRASH시키기
-
+	//-todo: 이 함수는 반드시 DB스레드풀에서 수행되어야 한다. 그렇지 않으면 CRASH시키기
+	CRASH_ASSERT( LThreadType == THREAD_DB_WORKER );
 	return OnSQLExecute();
 }
 
 void DatabaseJobContext::OnResult()
 {
-	//todo: 이 함수는 반드시 IO스레드풀에서 수행되어야 한다. 그렇지 않으면 CRASH시키기
+	//-todo: 이 함수는 반드시 IO스레드풀에서 수행되어야 한다. 그렇지 않으면 CRASH시키기
+	CRASH_ASSERT( LThreadType == THREAD_IO_WORKER );
 
-	if (mSuccess)
+	if ( mSuccess )
+	{
 		OnSuccess();
+	}
 	else
+	{
 		OnFail();
+	}
+		
 }
 
 

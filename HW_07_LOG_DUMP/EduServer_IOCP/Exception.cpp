@@ -35,7 +35,13 @@ void MakeDump(EXCEPTION_POINTERS* e)
 	exceptionInfo.ExceptionPointers = e;
 	exceptionInfo.ClientPointers = FALSE;
 
-	//todo: MiniDumpWriteDump를 사용하여 hFile에 덤프 기록
+	//-todo: MiniDumpWriteDump를 사용하여 hFile에 덤프 기록
+	MINIDUMP_TYPE mdt = (MINIDUMP_TYPE)( MiniDumpWithPrivateReadWriteMemory |
+										 MiniDumpWithDataSegs | MiniDumpWithHandleData | MiniDumpWithFullMemoryInfo |
+										 MiniDumpWithThreadInfo | MiniDumpWithUnloadedModules );
+
+	MiniDumpWriteDump( GetCurrentProcess(), GetCurrentProcessId(),
+					   hFile, mdt, ( e != 0 ) ? &exceptionInfo : 0, 0, NULL );
 
 	
 	if (hFile)
@@ -66,8 +72,21 @@ LONG WINAPI ExceptionFilter(EXCEPTION_POINTERS* exceptionInfo)
 		{
 			do
 			{
-				//todo: 내 프로세스 내의 스레드중 나 자신 스레드만 빼고 멈추게..
-				
+				//-todo: 내 프로세스 내의 스레드중 나 자신 스레드만 빼고 멈추게..
+				if ( myProcessId == te32.th32OwnerProcessID )
+				{
+					if ( myThreadId != te32.th32ThreadID )
+					{
+						HANDLE threadHandle = OpenThread( THREAD_ALL_ACCESS, FALSE, te32.th32ThreadID );
+						if ( !threadHandle )
+						{
+							printf_s( "Thread Close Error %d \n", GetLastError() );
+							continue;
+						}
+						TerminateThread( threadHandle, 0 );
+					}
+				}
+
 
 			} while (Thread32Next(hThreadSnap, &te32));
 
@@ -102,9 +121,79 @@ LONG WINAPI ExceptionFilter(EXCEPTION_POINTERS* exceptionInfo)
 	/// 콜스택도 남기고
 	historyOut << "========== Exception Call Stack ==========" << std::endl << std::endl;
 
-	//todo: StackWalker를 사용하여 historyOut에 현재 스레드의 콜스택 정보 남기기
+	//-todo: StackWalker를 사용하여 historyOut에 현재 스레드의 콜스택 정보 남기기
 
-	
+	int iSymbolNameSize = 1024;
+
+	// Variables for stack walking.
+	HANDLE hProcess = GetCurrentProcess();
+	HANDLE hThread = GetCurrentThread();
+	DWORD64 dw64Offset = 0;
+	DWORD dwOffset = 0;
+	DWORD dwSymOptions = SymGetOptions();
+	SYMBOL_INFO* pSymbolInfo = (SYMBOL_INFO*)malloc( sizeof( SYMBOL_INFO ) + iSymbolNameSize );
+	IMAGEHLP_LINE64 imageHelpLine;
+	STACKFRAME64 stackFrame64;
+
+
+	// Initialize stack frame.
+	memset( &stackFrame64, 0, sizeof( stackFrame64 ) );
+	stackFrame64.AddrPC.Offset = exceptionInfo->ContextRecord->Rip;
+	stackFrame64.AddrPC.Mode = AddrModeFlat;
+	stackFrame64.AddrFrame.Offset = exceptionInfo->ContextRecord->Rsp;
+	stackFrame64.AddrFrame.Mode = AddrModeFlat;
+	stackFrame64.AddrStack.Offset = exceptionInfo->ContextRecord->Rsp;
+	stackFrame64.AddrStack.Mode = AddrModeFlat;
+	stackFrame64.AddrBStore.Mode = AddrModeFlat;
+	stackFrame64.AddrReturn.Mode = AddrModeFlat;
+
+	// Set symbol options.
+	dwSymOptions |= SYMOPT_LOAD_LINES;
+	dwSymOptions |= SYMOPT_UNDNAME;
+	dwSymOptions |= SYMOPT_EXACT_SYMBOLS;
+	SymSetOptions( dwSymOptions );
+
+	// Initialize symbol.
+	memset( pSymbolInfo, 0, sizeof( SYMBOL_INFO ) + iSymbolNameSize );
+	pSymbolInfo->SizeOfStruct = sizeof( SYMBOL_INFO );
+	pSymbolInfo->MaxNameLen = iSymbolNameSize;
+
+	// Initialize line number info.
+	memset( &imageHelpLine, 0, sizeof( imageHelpLine ) );
+	imageHelpLine.SizeOfStruct = sizeof( imageHelpLine );
+
+	// Load symbols.
+	SymInitialize( GetCurrentProcess(), ".", 1 );
+
+
+	while ( 1 )
+	{
+		if ( !StackWalk64( IMAGE_FILE_MACHINE_I386, hProcess, hThread, &stackFrame64, exceptionInfo->ContextRecord, NULL, SymFunctionTableAccess64, SymGetModuleBase64, NULL ) )
+		{
+			break;
+		}
+
+		if ( SymFromAddr( hProcess, stackFrame64.AddrPC.Offset, &dw64Offset, pSymbolInfo ) && SymGetLineFromAddr64( hProcess, stackFrame64.AddrPC.Offset, &dwOffset, &imageHelpLine ) )
+		{
+			char chLineNumber[128];
+			_itoa_s( imageHelpLine.LineNumber, chLineNumber, 10 );
+
+			historyOut << pSymbolInfo->Name;
+			historyOut << "() [";
+			historyOut << imageHelpLine.FileName;
+			historyOut << ":";
+			historyOut << chLineNumber;
+			historyOut << "]";
+			historyOut << " <- ";
+		}
+	}
+
+
+
+
+
+
+
 	/// 이벤트 로그 남기고
 	LoggerUtil::EventLogDumpOut(historyOut);
 

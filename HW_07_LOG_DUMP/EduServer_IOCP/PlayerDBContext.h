@@ -2,17 +2,35 @@
 #include "ContentsConfig.h"
 #include "DBContext.h"
 
-//todo: Player 생성 작업 DB context만들기
-//struct CreatePlayerDataContext
-//{
-//	 ... ...
-//};
+//-todo: Player 생성 작업 DB context만들기
+struct CreatePlayerDataContext: public DatabaseJobContext, public ObjectPool<CreatePlayerDataContext>
+{
+	CreatePlayerDataContext( ClientSession* owner, int pid ): DatabaseJobContext( owner )
+	{
+	}
 
-//todo: Player 삭제 작업 DB context 만들기
+	void SetPlayerName( const wchar_t* name );
 
-//struct DeletePlayerDataContext
-//{
-//};
+	virtual bool OnSQLExecute();
+	virtual void OnSuccess();
+	virtual void OnFail() {}
+	wchar_t	mPlayerName[MAX_NAME_LEN];
+};
+
+//-todo: Player 삭제 작업 DB context 만들기
+
+struct DeletePlayerDataContext: public DatabaseJobContext, public ObjectPool<DeletePlayerDataContext>
+{
+	DeletePlayerDataContext( ClientSession* owner, int pid ): DatabaseJobContext( owner ), mPlayerId( pid )
+	{
+	}
+
+	virtual bool OnSQLExecute();
+	virtual void OnSuccess();
+	virtual void OnFail();
+
+	int		mPlayerId = -1;
+};
 
 
 /// player load 작업

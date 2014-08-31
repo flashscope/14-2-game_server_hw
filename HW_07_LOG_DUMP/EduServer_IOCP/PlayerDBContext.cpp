@@ -6,9 +6,63 @@
 #include "ClientSession.h"
 
 
-//todo: CreatePlayerDataContext 구현
+//-todo: CreatePlayerDataContext 구현
+bool CreatePlayerDataContext::OnSQLExecute()
+{
+	DBHelper dbHelper;
 
-//todo: DeletePlayerDataContext 구현
+	dbHelper.BindResultColumnText( mPlayerName, MAX_NAME_LEN );
+
+	if ( dbHelper.Execute( SQL_CreatePlayer ) ) 
+	{
+		if ( dbHelper.FetchRow() )
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void CreatePlayerDataContext::OnSuccess()
+{
+	mSessionObject->mPlayer.TestCreatePlayerData( mPlayerName );
+}
+
+void CreatePlayerDataContext::SetPlayerName( const wchar_t* name )
+{
+	wcscpy_s( mPlayerName, name );
+}
+
+
+
+//-todo: DeletePlayerDataContext 구현
+bool DeletePlayerDataContext::OnSQLExecute()
+{
+	DBHelper dbHelper;
+
+	dbHelper.BindParamInt( &mPlayerId );
+
+	if ( dbHelper.Execute( SQL_DeletePlayer ) )
+	{
+		if ( dbHelper.FetchRow() )
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void DeletePlayerDataContext::OnSuccess()
+{
+	mSessionObject->mPlayer.TestDeletePlayerData( mPlayerId );
+}
+
+void DeletePlayerDataContext::OnFail()
+{
+	EVENT_LOG( "DeletePlayerDataContext fail", mPlayerId );
+}
 
 
 
@@ -38,8 +92,8 @@ bool LoadPlayerDataContext::OnSQLExecute()
 
 void LoadPlayerDataContext::OnSuccess()
 {
-	//todo: 플레이어 로드 성공시 처리하기
-	
+	//-todo: 플레이어 로드 성공시 처리하기
+	mSessionObject->mPlayer.ResponseLoad(mPlayerId, mPosX, mPosY, mPosZ, mIsValid, mPlayerName, mComment );
 }
 
 void LoadPlayerDataContext::OnFail()
