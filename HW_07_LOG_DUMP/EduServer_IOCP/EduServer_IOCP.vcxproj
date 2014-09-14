@@ -71,6 +71,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\Users\Administrator\Desktop\protoBuf-master\protoBuf-master\protobuf-2.4.1\protobuf-2.4.1\src;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Administrator\Documents\GitHub\14-2-game_server_hw\HW_07_LOG_DUMP\EduServer_IOCP\Protobuff\Release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -103,7 +105,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>winmm.lib;ws2_32.lib;DbgHelp.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>winmm.lib;ws2_32.lib;DbgHelp.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;libprotobuf.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -156,6 +158,7 @@
     <ClInclude Include="EduServer_IOCP.h" />
     <ClInclude Include="Exception.h" />
     <ClInclude Include="FastSpinlock.h" />
+    <ClInclude Include="mypacket.pb.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="IocpManager.h" />
     <ClInclude Include="Log.h" />
@@ -185,6 +188,7 @@
     <ClCompile Include="IocpManager.cpp" />
     <ClCompile Include="ClientSessionManager.cpp" />
     <ClCompile Include="Log.cpp" />
+    <ClCompile Include="mypacket.pb.cc" />
     <ClCompile Include="OverlappedIOContext.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerDBContext.cpp" />
@@ -205,6 +209,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\SQL\GameDB.sql" />
+    <None Include="MyPacket.proto" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

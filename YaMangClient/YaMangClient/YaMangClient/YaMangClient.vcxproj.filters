@@ -1,0 +1,400 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="MainLoop">
+      <UniqueIdentifier>{e6d79ce0-2101-4f0a-b47c-3f696244f68c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils">
+      <UniqueIdentifier>{cf8ba7a5-240a-46e3-a970-d6e03db70597}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network">
+      <UniqueIdentifier>{1b0c526e-0e33-4789-9731-1cab60f521a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SharedPreference">
+      <UniqueIdentifier>{0a26ce5f-33d2-4912-8f37-272c6dcecfb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Render">
+      <UniqueIdentifier>{bed35af9-c826-4a2b-8672-e989610c4c61}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene">
+      <UniqueIdentifier>{36ad6daa-b950-43b1-9c25-c04abfb0ea0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource">
+      <UniqueIdentifier>{90d90dd2-378d-4724-a957-884336741d01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Event">
+      <UniqueIdentifier>{781a1a04-c0ee-4c90-8b4d-8ad63d625aa6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UnitObject">
+      <UniqueIdentifier>{9da43219-7480-410a-a9de-e069ccbc01b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UnitObject\Corps">
+      <UniqueIdentifier>{ee841ee9-0704-4f2b-a7dd-95ce0211f841}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UnitObject\Unit">
+      <UniqueIdentifier>{0b915cdb-237e-4d02-b28e-b8e54002a7d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sound">
+      <UniqueIdentifier>{ecc00c02-8c42-4716-9011-bc6f0804997d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UnitObject\Collision">
+      <UniqueIdentifier>{004e144e-b1f2-48a5-9563-fd3f16cc3089}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Player">
+      <UniqueIdentifier>{78444145-5232-461d-9f90-03b763774cf0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{7a560131-5cc2-4294-a4fc-82cddf39668e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Map">
+      <UniqueIdentifier>{771c1ac9-df50-4e04-8e73-2158a849f244}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader">
+      <UniqueIdentifier>{f70b91af-4b90-4d0a-84f8-da20c77441fb}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Resource.h">
+      <Filter>MainLoop</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>MainLoop</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>MainLoop</Filter>
+    </ClInclude>
+    <ClInclude Include="YaMangClient.h">
+      <Filter>MainLoop</Filter>
+    </ClInclude>
+    <ClInclude Include="GameManager.h">
+      <Filter>MainLoop</Filter>
+    </ClInclude>
+    <ClInclude Include="MacroSet.h">
+      <Filter>MainLoop</Filter>
+    </ClInclude>
+    <ClInclude Include="MainWindow.h">
+      <Filter>MainLoop</Filter>
+    </ClInclude>
+    <ClInclude Include="CircularBuffer.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Logger.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SharedPreference\PacketType.h">
+      <Filter>SharedPreference</Filter>
+    </ClInclude>
+    <ClInclude Include="InputDispatcher.h">
+      <Filter>Event</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyInput.h">
+      <Filter>Event</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkManager.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>MainLoop</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SharedPreference\SharedDefine.h">
+      <Filter>SharedPreference</Filter>
+    </ClInclude>
+    <ClInclude Include="Interface3D.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraController.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="TextObject.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\SharedPreference\EnumSet.h">
+      <Filter>SharedPreference</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneLoad.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="ScenePlay.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneResult.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceManager.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="TextManager.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="DummyRender.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="BreadBoard.h">
+      <Filter>UnitObject\Corps</Filter>
+    </ClInclude>
+    <ClInclude Include="Corps.h">
+      <Filter>UnitObject\Corps</Filter>
+    </ClInclude>
+    <ClInclude Include="Action.h">
+      <Filter>UnitObject\Corps</Filter>
+    </ClInclude>
+    <ClInclude Include="Arrow.h">
+      <Filter>UnitObject\Unit</Filter>
+    </ClInclude>
+    <ClInclude Include="Guard.h">
+      <Filter>UnitObject\Unit</Filter>
+    </ClInclude>
+    <ClInclude Include="Knight.h">
+      <Filter>UnitObject\Unit</Filter>
+    </ClInclude>
+    <ClInclude Include="Pike.h">
+      <Filter>UnitObject\Unit</Filter>
+    </ClInclude>
+    <ClInclude Include="Sword.h">
+      <Filter>UnitObject\Unit</Filter>
+    </ClInclude>
+    <ClInclude Include="Unit.h">
+      <Filter>UnitObject\Unit</Filter>
+    </ClInclude>
+    <ClInclude Include="Act.h">
+      <Filter>UnitObject\Unit</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundManager.h">
+      <Filter>Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="MouseRender.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision.h">
+      <Filter>UnitObject\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionManager.h">
+      <Filter>UnitObject\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="MouseManager.h">
+      <Filter>Event</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerManager.h">
+      <Filter>Player</Filter>
+    </ClInclude>
+    <ClInclude Include="King.h">
+      <Filter>UnitObject\Unit</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceDef.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="UIManager.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UIObject.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Exception.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="MiniMap.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="CorpsMark.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="MapManager.h">
+      <Filter>Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Frustum.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="QuadTree.h">
+      <Filter>Render</Filter>
+    </ClInclude>
+    <ClInclude Include="mypacket.pb.h">
+      <Filter>SharedPreference</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>MainLoop</Filter>
+    </ClCompile>
+    <ClCompile Include="YaMangClient.cpp">
+      <Filter>MainLoop</Filter>
+    </ClCompile>
+    <ClCompile Include="GameManager.cpp">
+      <Filter>MainLoop</Filter>
+    </ClCompile>
+    <ClCompile Include="MainWindow.cpp">
+      <Filter>MainLoop</Filter>
+    </ClCompile>
+    <ClCompile Include="CircularBuffer.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Logger.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="InputDispatcher.cpp">
+      <Filter>Event</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyInput.cpp">
+      <Filter>Event</Filter>
+    </ClCompile>
+    <ClCompile Include="EventHandler.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkManager.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>MainLoop</Filter>
+    </ClCompile>
+    <ClCompile Include="Interface3D.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraController.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="TextObject.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneLoad.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="ScenePlay.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneResult.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceManager.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="TextManager.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="DummyRender.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Corps.cpp">
+      <Filter>UnitObject\Corps</Filter>
+    </ClCompile>
+    <ClCompile Include="Arrow.cpp">
+      <Filter>UnitObject\Unit</Filter>
+    </ClCompile>
+    <ClCompile Include="Guard.cpp">
+      <Filter>UnitObject\Unit</Filter>
+    </ClCompile>
+    <ClCompile Include="Knight.cpp">
+      <Filter>UnitObject\Unit</Filter>
+    </ClCompile>
+    <ClCompile Include="Pike.cpp">
+      <Filter>UnitObject\Unit</Filter>
+    </ClCompile>
+    <ClCompile Include="Sword.cpp">
+      <Filter>UnitObject\Unit</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit.cpp">
+      <Filter>UnitObject\Unit</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundManager.cpp">
+      <Filter>Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="MouseRender.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Collision.cpp">
+      <Filter>UnitObject\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="CollisionManager.cpp">
+      <Filter>UnitObject\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="MouseManager.cpp">
+      <Filter>Event</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerManager.cpp">
+      <Filter>Player</Filter>
+    </ClCompile>
+    <ClCompile Include="King.cpp">
+      <Filter>UnitObject\Unit</Filter>
+    </ClCompile>
+    <ClCompile Include="UIManager.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UIObject.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Exception.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="MiniMap.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="CorpsMark.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="MapManager.cpp">
+      <Filter>Map</Filter>
+    </ClCompile>
+    <ClCompile Include="Frustum.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="QuadTree.cpp">
+      <Filter>Render</Filter>
+    </ClCompile>
+    <ClCompile Include="mypacket.pb.cc">
+      <Filter>SharedPreference</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="YaMangClient.rc">
+      <Filter>리소스 파일</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="small.ico">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="YaMangClient.ico">
+      <Filter>리소스 파일</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="ClientConfig.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resource\ShaderFiles\SelectShader.fx">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Resource\ShaderFiles\FightShader.fx">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Resource\ShaderFiles\MapShader.fx">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="MyPacket.proto">
+      <Filter>SharedPreference</Filter>
+    </None>
+  </ItemGroup>
+</Project>

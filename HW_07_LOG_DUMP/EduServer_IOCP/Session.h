@@ -34,6 +34,13 @@ public:
 
 	void EchoBack();
 
+	void Handle_CS_LOGIN();
+	bool Handle_SC_LOGIN();
+	void Handle_CS_CHAT();
+	bool Handle_SC_CHAT();
+	void Handle_CS_MOVE();
+	bool Handle_SC_MOVE();
+
 protected:
 
 	SOCKET			mSocket;
@@ -45,6 +52,8 @@ protected:
 
 	volatile long	mRefCount;
 	volatile long	mConnected;
+
+	int				mPlayerID = -1;
 
 };
 

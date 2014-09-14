@@ -7,6 +7,19 @@
 #include "Session.h"
 #include "IocpManager.h"
 
+
+#include "mypacket.pb.h"
+
+#include <google/protobuf/io/zero_copy_stream_impl_lite.h>
+#include <google/protobuf/text_format.h>
+
+
+#define MAP_MAX 5.0f
+
+using namespace google;
+
+
+
 __declspec(thread) std::deque<Session*>* LSendRequestSessionList = nullptr;
 
 Session::Session(size_t sendBufSize, size_t recvBufSize) 
@@ -240,6 +253,161 @@ void Session::EchoBack()
 		return;
 
 	mRecvBuffer.Remove(len);
+
+}
+
+// need seperate another class
+
+void Session::Handle_CS_LOGIN()
+{
+	TRACE_THIS;
+
+	size_t len = mRecvBuffer.GetContiguiousBytes();
+
+	if ( len == 0 )
+	{
+		return;
+	}
+
+
+	Handle_SC_LOGIN();
+
+	mRecvBuffer.Remove( len );
+}
+
+bool Session::Handle_SC_LOGIN()
+{
+	TRACE_THIS;
+
+	if ( !IsConnected() )
+	{
+		return false;
+	}
+
+
+
+
+	MyPacket::Position position;
+	float posX = static_cast <float> ( rand() ) / ( static_cast <float> ( RAND_MAX / MAP_MAX ) );
+	float posY = 1.0f;
+	float posZ = static_cast <float> ( rand() ) / ( static_cast <float> ( RAND_MAX / MAP_MAX ) );
+	position.set_x( posX );
+	position.set_y( posY );
+	position.set_z( posZ );
+
+	MyPacket::LoginResult loginResult;
+	loginResult.set_playerid( mPlayerID );
+	loginResult.set_playername( "anonymous" );
+	MyPacket::PacketHeader packetHeader;
+	packetHeader.set_messagesize( position.ByteSize() );
+	packetHeader.set_messagetype( MyPacket::PKT_SC_MOVE );
+
+	int len = position.ByteSize() + packetHeader.ByteSize();
+
+	FastSpinlockGuard criticalSection( mSendBufferLock );
+
+	if ( mSendBuffer.GetFreeSpaceSize() < len )
+	{
+		return false;
+	}
+
+	/// flush later...
+	LSendRequestSessionList->push_back( this );
+
+	char* destData = mSendBuffer.GetBuffer();
+
+	memcpy( destData, 0, sizeof( char )*len );//.....
+	protobuf::io::ArrayOutputStream os( destData, len );
+	protobuf::io::CodedOutputStream cos( &os );
+
+	cos.WriteRaw( &packetHeader, sizeof( packetHeader ) );
+	position.SerializeToCodedStream( &cos );
+
+	mSendBuffer.Commit( len );
+	return true;
+}
+
+void Session::Handle_CS_CHAT()
+{
+	TRACE_THIS;
+
+	size_t len = mRecvBuffer.GetContiguiousBytes();
+
+	if ( len == 0 )
+	{
+		return;
+	}
+}
+
+bool Session::Handle_SC_CHAT()
+{
+	TRACE_THIS;
+
+	if ( !IsConnected() )
+	{
+		return false;
+	}
+}
+
+void Session::Handle_CS_MOVE()
+{
+	TRACE_THIS;
+
+	size_t len = mRecvBuffer.GetContiguiousBytes();
+
+	if ( len == 0 )
+	{
+		return;
+	}
+
+	Handle_SC_MOVE();
+
+	mRecvBuffer.Remove( len );
+}
+
+bool Session::Handle_SC_MOVE()
+{
+	TRACE_THIS;
+
+	if ( !IsConnected() )
+	{
+		return false;
+	}
+	MyPacket::MoveResult moveResult;
+	MyPacket::Position* position = moveResult.mutable_playerpos();
+	float posX = static_cast <float> ( rand() ) / ( static_cast <float> ( RAND_MAX / MAP_MAX ) );
+	float posY = 1.0f;
+	float posZ = static_cast <float> ( rand() ) / ( static_cast <float> ( RAND_MAX / MAP_MAX ) );
+	position->set_x( posX );
+	position->set_y( posY );
+	position->set_z( posZ );
+
+	MyPacket::PacketHeader packetHeader;
+	packetHeader.set_messagesize( position->ByteSize() + moveResult.ByteSize() ); //....
+	packetHeader.set_messagetype( MyPacket::PKT_SC_MOVE );
+
+	int len = position->ByteSize() + packetHeader.ByteSize() + moveResult.ByteSize();
+
+	FastSpinlockGuard criticalSection( mSendBufferLock );
+
+	if ( mSendBuffer.GetFreeSpaceSize() < len )
+	{
+		return false;
+	}
+
+	/// flush later...
+	LSendRequestSessionList->push_back( this );
+
+	char* destData = mSendBuffer.GetBuffer();
+
+	protobuf::io::ArrayOutputStream os( destData, len );
+	protobuf::io::CodedOutputStream cos( &os );
+
+	cos.WriteRaw( &packetHeader, sizeof( packetHeader ) );
+	moveResult.SerializeToCodedStream( &cos );
+
+	mSendBuffer.Commit( len );
+	return true;
 
 }
 

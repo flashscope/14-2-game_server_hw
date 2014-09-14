@@ -121,8 +121,9 @@ void IOThread::DoIocpJob()
 		remote->RecvCompletion(dwTransferred);
 	
 		/// for test
-		remote->EchoBack();
-		
+		//remote->EchoBack();
+		remote->Handle_CS_MOVE(); // test
+
 		completionOk = remote->PreRecv();
 
 		break;

@@ -1,0 +1,242 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{FE999F60-92D0-4F12-8904-7BB720E92ABC}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>YaMangClient</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(SolutionDir)YaMangClient\LibraryBugTrap;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;..\..\..\Bin\YaMangClient\;C:\Users\Administrator\Documents\GitHub\14-2-game_server_hw\YaMangClient\protobuf\src;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)YaMangClient\LibraryBugTrap;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x86;..\..\..\Bin\YaMangClient\;C:\Users\Administrator\Documents\GitHub\14-2-game_server_hw\YaMangClient\protobuf\Release;$(LibraryPath)</LibraryPath>
+    <OutDir>..\..\..\Bin\YaMangClient\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\YaMangDxDll\YaMangDxDll;$(SolutionDir)..\..\SharedPreference;$(SolutionDir)..\TinyXmlLib;$(SolutionDir)YaMangClient\LibraryFMOD;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>ws2_32.lib;d3d9.lib;d3dx9d.lib;dxerr.lib;dxguid.lib;winmm.lib;comctl32.lib;TinyXmlLib.lib;DbgHelp.lib;fmodL_vc.lib;fmodstudioL_vc.lib;fmod_vc.lib;fmodstudio_vc.lib;BugTrapU.lib;libprotobuf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Debug;$(SolutionDir)YaMangClient\BreakPad\src\client\windows\Debug\lib;$(SolutionDir)YaMangClient\LibraryFMOD;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy "ClientConfig.xml" "..\..\..\Bin\YaMangClient\" /s /d /y
+xcopy ".\\Resource\*" "..\..\..\Bin\YaMangClient\" /s /d /y
+xcopy ".\\FmodDLL\*" "..\..\..\Bin\YaMangClient\" /s /d /y
+xcopy ".\\BugTrapDLL\*" "..\..\..\Bin\YaMangClient\" /s /d /y
+</Command>
+    </PostBuildEvent>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\SharedPreference\EnumSet.h" />
+    <ClInclude Include="..\..\..\SharedPreference\PacketType.h" />
+    <ClInclude Include="..\..\..\SharedPreference\SharedDefine.h" />
+    <ClInclude Include="Act.h" />
+    <ClInclude Include="Action.h" />
+    <ClInclude Include="Arrow.h" />
+    <ClInclude Include="BreadBoard.h" />
+    <ClInclude Include="CameraController.h" />
+    <ClInclude Include="CircularBuffer.h" />
+    <ClInclude Include="Collision.h" />
+    <ClInclude Include="CollisionManager.h" />
+    <ClInclude Include="Corps.h" />
+    <ClInclude Include="CorpsMark.h" />
+    <ClInclude Include="DummyRender.h" />
+    <ClInclude Include="Exception.h" />
+    <ClInclude Include="Frustum.h" />
+    <ClInclude Include="GameManager.h" />
+    <ClInclude Include="Guard.h" />
+    <ClInclude Include="InputDispatcher.h" />
+    <ClInclude Include="KeyInput.h" />
+    <ClInclude Include="King.h" />
+    <ClInclude Include="Knight.h" />
+    <ClInclude Include="Logger.h" />
+    <ClInclude Include="MacroSet.h" />
+    <ClInclude Include="MainWindow.h" />
+    <ClInclude Include="MapManager.h" />
+    <ClInclude Include="MiniMap.h" />
+    <ClInclude Include="MouseManager.h" />
+    <ClInclude Include="MouseRender.h" />
+    <ClInclude Include="mypacket.pb.h" />
+    <ClInclude Include="NetworkManager.h" />
+    <ClInclude Include="Pike.h" />
+    <ClInclude Include="PlayerManager.h" />
+    <ClInclude Include="QuadTree.h" />
+    <ClInclude Include="Renderer.h" />
+    <ClInclude Include="Interface3D.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="ResourceDef.h" />
+    <ClInclude Include="ResourceManager.h" />
+    <ClInclude Include="Scene.h" />
+    <ClInclude Include="SceneLoad.h" />
+    <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="ScenePlay.h" />
+    <ClInclude Include="SceneResult.h" />
+    <ClInclude Include="SoundManager.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="Sword.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="TextManager.h" />
+    <ClInclude Include="TextObject.h" />
+    <ClInclude Include="Timer.h" />
+    <ClInclude Include="UIManager.h" />
+    <ClInclude Include="UIObject.h" />
+    <ClInclude Include="Unit.h" />
+    <ClInclude Include="YaMangClient.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Arrow.cpp" />
+    <ClCompile Include="CameraController.cpp" />
+    <ClCompile Include="CircularBuffer.cpp" />
+    <ClCompile Include="Collision.cpp" />
+    <ClCompile Include="CollisionManager.cpp" />
+    <ClCompile Include="Corps.cpp" />
+    <ClCompile Include="CorpsMark.cpp" />
+    <ClCompile Include="DummyRender.cpp" />
+    <ClCompile Include="EventHandler.cpp" />
+    <ClCompile Include="Exception.cpp" />
+    <ClCompile Include="Frustum.cpp" />
+    <ClCompile Include="GameManager.cpp" />
+    <ClCompile Include="Guard.cpp" />
+    <ClCompile Include="InputDispatcher.cpp" />
+    <ClCompile Include="KeyInput.cpp" />
+    <ClCompile Include="King.cpp" />
+    <ClCompile Include="Knight.cpp" />
+    <ClCompile Include="Logger.cpp" />
+    <ClCompile Include="MainWindow.cpp" />
+    <ClCompile Include="MapManager.cpp" />
+    <ClCompile Include="MiniMap.cpp" />
+    <ClCompile Include="MouseManager.cpp" />
+    <ClCompile Include="MouseRender.cpp" />
+    <ClCompile Include="mypacket.pb.cc" />
+    <ClCompile Include="NetworkManager.cpp" />
+    <ClCompile Include="Pike.cpp" />
+    <ClCompile Include="PlayerManager.cpp" />
+    <ClCompile Include="QuadTree.cpp" />
+    <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="Interface3D.cpp" />
+    <ClCompile Include="ResourceManager.cpp" />
+    <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="SceneLoad.cpp" />
+    <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="ScenePlay.cpp" />
+    <ClCompile Include="SceneResult.cpp" />
+    <ClCompile Include="SoundManager.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Sword.cpp" />
+    <ClCompile Include="TextManager.cpp" />
+    <ClCompile Include="TextObject.cpp" />
+    <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="UIManager.cpp" />
+    <ClCompile Include="UIObject.cpp" />
+    <ClCompile Include="Unit.cpp" />
+    <ClCompile Include="YaMangClient.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="YaMangClient.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="small.ico" />
+    <Image Include="YaMangClient.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\yaMangDxDll\yaMangDxDll\yaMangDxDll.vcxproj">
+      <Project>{e6d200dd-4fe0-48a2-921e-8807c91e08d6}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="ClientConfig.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="MyPacket.proto" />
+    <None Include="Resource\ShaderFiles\SelectShader.fx">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resource\ShaderFiles\FightShader.fx">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resource\ShaderFiles\MapShader.fx">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

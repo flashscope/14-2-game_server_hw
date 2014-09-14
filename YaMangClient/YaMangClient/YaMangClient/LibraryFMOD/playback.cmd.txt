@@ -1,0 +1,78 @@
+Playback::version, 1
+#
+# FMOD Studio playback recording
+#   FMOD Version = 10306
+#   SoftwareChannelCount = 64
+#   Initialize = { 32,0,0 }
+#   AdvSettings = { 0,0,0,0,0,0,0,0,180.000000,360.000000,4000.000000,0.000000,400,0,1500.000000,0,8,65536,81920,49152,2,0 }
+#   StudioAdvSettings = { 0,0 }
+#
+Playback::frame, 0
+System::loadBankFile, ..\media\Master Bank.bank, 1, 2101760
+System::loadBankFile, ..\media\Master Bank.strings.bank, 1, 2102016
+System::loadBankFile, ..\media\Vehicles.bank, 1, 2102272
+System::loadBankFile, ..\media\Weapons.bank, 1, 2102528
+Playback::frame, 5120
+System::flushCommands
+System::getEvent, {7aa5e8f1-8ec2-42c6-b465-1241a603a055}, 0, 2102784
+EventDescription::createInstance, 2102784, 2103552
+EventInstance::getParameter, 2103552, RPM, 2103296
+ParameterInstance::setValue, 2103296, 650
+EventInstance::start, 2103552
+System::setListenerAttributes, {{0,0,0},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2103552, {{0,0,2},{0,0,0},{0,0,1},{0,1,0}}
+Playback::frame, 9216
+EventInstance::set3DAttributes, 2103552, {{-1,0,2},{0,0,0},{0,0,1},{0,1,0}}
+Playback::frame, 31744
+EventInstance::set3DAttributes, 2103552, {{-2,0,2},{0,0,0},{0,0,1},{0,1,0}}
+Playback::frame, 10240
+EventInstance::set3DAttributes, 2103552, {{-3,0,2},{0,0,0},{0,0,1},{0,1,0}}
+Playback::frame, 4096
+EventInstance::set3DAttributes, 2103552, {{-3,0,3},{0,0,0},{0,0,1},{0,1,0}}
+Playback::frame, 10240
+EventInstance::set3DAttributes, 2103552, {{-4,0,3},{0,0,0},{0,0,1},{0,1,0}}
+Playback::frame, 7168
+EventInstance::set3DAttributes, 2103552, {{-4,0,4},{0,0,0},{0,0,1},{0,1,0}}
+Playback::frame, 10240
+EventInstance::set3DAttributes, 2103552, {{-5,0,4},{0,0,0},{0,0,1},{0,1,0}}
+Playback::frame, 7168
+EventInstance::set3DAttributes, 2103552, {{-5,0,5},{0,0,0},{0,0,1},{0,1,0}}
+Playback::frame, 4096
+EventInstance::set3DAttributes, 2103552, {{-6,0,5},{0,0,0},{0,0,1},{0,1,0}}
+Playback::frame, 10240
+EventInstance::set3DAttributes, 2103552, {{-6,0,6},{0,0,0},{0,0,1},{0,1,0}}
+Playback::frame, 5120
+EventInstance::set3DAttributes, 2103552, {{-7,0,6},{0,0,0},{0,0,1},{0,1,0}}
+Playback::frame, 9216
+EventInstance::set3DAttributes, 2103552, {{-7,0,5},{0,0,0},{0,0,1},{0,1,0}}
+Playback::frame, 8192
+EventInstance::set3DAttributes, 2103552, {{-8,0,5},{0,0,0},{0,0,1},{0,1,0}}
+Playback::frame, 4096
+EventInstance::set3DAttributes, 2103552, {{-8,0,4},{0,0,0},{0,0,1},{0,1,0}}
+Playback::frame, 7168
+EventInstance::set3DAttributes, 2103552, {{-9,0,4},{0,0,0},{0,0,1},{0,1,0}}
+Playback::frame, 10240
+EventInstance::set3DAttributes, 2103552, {{-9,0,3},{0,0,0},{0,0,1},{0,1,0}}
+Playback::frame, 5120
+EventInstance::set3DAttributes, 2103552, {{-10,0,3},{0,0,0},{0,0,1},{0,1,0}}
+Playback::frame, 7168
+EventInstance::set3DAttributes, 2103552, {{-10,0,2},{0,0,0},{0,0,1},{0,1,0}}
+Playback::frame, 7168
+EventInstance::set3DAttributes, 2103552, {{-11,0,2},{0,0,0},{0,0,1},{0,1,0}}
+Playback::frame, 7168
+EventInstance::set3DAttributes, 2103552, {{-11,0,1},{0,0,0},{0,0,1},{0,1,0}}
+Playback::frame, 9216
+EventInstance::set3DAttributes, 2103552, {{-12,0,1},{0,0,0},{0,0,1},{0,1,0}}
+Playback::frame, 8192
+EventInstance::set3DAttributes, 2103552, {{-12,0,0},{0,0,0},{0,0,1},{0,1,0}}
+Playback::frame, 7168
+EventInstance::set3DAttributes, 2103552, {{-13,0,0},{0,0,0},{0,0,1},{0,1,0}}
+Playback::frame, 2048
+EventInstance::set3DAttributes, 2103552, {{-13,0,-1},{0,0,0},{0,0,1},{0,1,0}}
+Playback::frame, 10240
+Bank::unload, 2101760
+Bank::unload, 2102016
+Bank::unload, 2102272
+Bank::unload, 2102528
+Playback::frame, 15360
+System::flushCommands

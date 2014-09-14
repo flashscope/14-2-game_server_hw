@@ -83,7 +83,7 @@ LONG WINAPI ExceptionFilter(EXCEPTION_POINTERS* exceptionInfo)
 							printf_s( "Thread Close Error %d \n", GetLastError() );
 							continue;
 						}
-						TerminateThread( threadHandle, 0 );
+						SuspendThread( threadHandle );
 					}
 				}
 
